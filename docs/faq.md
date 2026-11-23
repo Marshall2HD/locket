@@ -27,4 +27,4 @@ notification.
 ### Where is my history stored?
 
 Store history is `%LOCALAPPDATA%\Packages\MarshallHD.Locket_*\LocalState\history.sqlite` and is
-removed on uninstall. Unpackaged builds use `%LOCALAPPDATA%\Kleio\history.sqlite`.
+removed on uninstall. Unpackaged builds use `%LOCALAPPDATA%\Locket\history.sqlite`.

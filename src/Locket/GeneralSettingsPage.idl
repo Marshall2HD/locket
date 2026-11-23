@@ -1,0 +1,8 @@
+namespace Locket
+{
+    [default_interface]
+    runtimeclass GeneralSettingsPage : Microsoft.UI.Xaml.Controls.Page
+    {
+        GeneralSettingsPage();
+    }
+}

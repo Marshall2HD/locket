@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="Locket.AppearanceSettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Locket"
+    Background="Transparent"
+    Loaded="Page_Loaded"
+    Unloaded="Page_Unloaded">
+    <Page.Resources>
+        <Style TargetType="ToggleSwitch" BasedOn="{StaticResource SettingsToggleSwitchStyle}" />
+        <Style TargetType="NumberBox" BasedOn="{StaticResource SettingsNumberBoxStyle}" />
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock x:Uid="Appearance_Header" Style="{StaticResource SettingsPageHeaderTextStyle}" AutomationProperties.HeadingLevel="Level1" />
+
+        <ScrollViewer Grid.Row="1" Style="{StaticResource SettingsPageScrollViewerStyle}">
+            <StackPanel Style="{StaticResource SettingsPageContentStyle}">
+
+                <!-- ===== Popup ===== -->
+                <TextBlock x:Uid="Appearance_PopupSection" Style="{StaticResource SettingsSectionHeaderTextStyle}" Margin="1,0,0,4" AutomationProperties.HeadingLevel="Level2" />
+                <local:SettingsCard x:Uid="Appearance_PopupAtCard" Glyph="&#xE962;">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button
+                            x:Name="ResetPositionButton"
+                            x:Uid="Appearance_ResetPosition"
+                            Click="ResetPositionButton_Click"
+                            Visibility="Collapsed">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon FontSize="14" Glyph="&#xE7A7;" />
+                                <TextBlock x:Uid="Appearance_ResetPositionText" />
+                            </StackPanel>
+                        </Button>
+                        <ComboBox
+                            x:Name="PopupScreenCombo"
+                            x:Uid="Appearance_PopupScreenCombo"
+                            MinWidth="180"
+                            VerticalAlignment="Center"
+                            Visibility="Collapsed"
+                            SelectionChanged="PopupScreenCombo_SelectionChanged" />
+                        <ComboBox
+                            x:Name="PopupAtCombo"
+                            x:Uid="Appearance_PopupAtCombo"
+                            MinWidth="200"
+                            VerticalAlignment="Center"
+                            SelectionChanged="PopupAtCombo_SelectionChanged">
+                            <ComboBoxItem x:Uid="Appearance_PopupAtCursor" />
+                            <ComboBoxItem x:Uid="Appearance_PopupAtTrayIcon" />
+                            <ComboBoxItem x:Uid="Appearance_PopupAtWindowCenter" />
+                            <ComboBoxItem x:Uid="Appearance_PopupAtScreenCenter" />
+                            <ComboBoxItem x:Uid="Appearance_PopupAtLastPosition" />
+                        </ComboBox>
+                    </StackPanel>
+                </local:SettingsCard>
+                <local:SettingsCard x:Uid="Appearance_PinToCard" Glyph="&#xE718;">
+                    <ComboBox x:Name="PinToCombo" x:Uid="Appearance_PinToCombo" MinWidth="200" VerticalAlignment="Center" SelectionChanged="PinToCombo_SelectionChanged">
+                        <ComboBoxItem x:Uid="Appearance_PinToTop" />
+                        <ComboBoxItem x:Uid="Appearance_PinToBottom" />
+                    </ComboBox>
+                </local:SettingsCard>
+                <local:SettingsCard x:Uid="Appearance_ImageHeightCard" Glyph="&#xEB9F;">
+                    <NumberBox
+                        x:Name="ImageHeightBox"
+                        x:Uid="Appearance_ImageHeightBox"
+                        Minimum="1"
+                        Maximum="200"
+                        SmallChange="1"
+                        LargeChange="10"
+                        ValueChanged="ImageHeightBox_ValueChanged" />
+                </local:SettingsCard>
+                <local:SettingsCard x:Uid="Appearance_OpenPreviewCard" Glyph="&#xE8FF;">
+                    <ToggleSwitch x:Name="OpenPreviewToggle" x:Uid="Appearance_OpenPreviewToggle" Toggled="OpenPreviewToggle_Toggled" />
+                </local:SettingsCard>
+                <local:SettingsCard x:Name="PreviewDelayCard" x:Uid="Appearance_PreviewDelayCard" Glyph="&#xE916;">
+                    <NumberBox
+                        x:Name="PreviewDelayBox"
+                        x:Uid="Appearance_PreviewDelayBox"
+                        Minimum="200"
+                        Maximum="100000"
+                        SmallChange="100"
+                        LargeChange="1000"
+                        ValueChanged="PreviewDelayBox_ValueChanged" />
+                </local:SettingsCard>
+                <local:SettingsCard x:Uid="Appearance_HighlightCard" Glyph="&#xE7E6;">
+                    <ComboBox x:Name="HighlightCombo" x:Uid="Appearance_HighlightCombo" MinWidth="200" VerticalAlignment="Center" SelectionChanged="HighlightCombo_SelectionChanged">
+                        <ComboBoxItem x:Uid="Appearance_HighlightBold" />
+                        <ComboBoxItem x:Uid="Appearance_HighlightItalic" />
+                        <ComboBoxItem x:Uid="Appearance_HighlightUnderline" />
+                        <ComboBoxItem x:Uid="Appearance_HighlightColor" />
+                        <ComboBoxItem x:Uid="Appearance_HighlightNone" />
+                    </ComboBox>
+                </local:SettingsCard>
+                <local:SettingsCard x:Uid="Appearance_SpecialSymbolsCard" Glyph="&#xE943;">
+                    <ToggleSwitch x:Name="SpecialSymbolsToggle" x:Uid="Appearance_SpecialSymbolsToggle" Toggled="SpecialSymbolsToggle_Toggled" />
+                </local:SettingsCard>
+
+                <!-- ===== Notification area ===== -->
+                <TextBlock x:Uid="Appearance_NotificationAreaSection" Style="{StaticResource SettingsSectionHeaderTextStyle}" AutomationProperties.HeadingLevel="Level2" />
+                <local:SettingsCard x:Uid="Appearance_ShowTrayIconCard" Glyph="&#xE7F4;">
+                    <StackPanel Orientation="Horizontal" Spacing="16">
+                        <ComboBox x:Name="TrayIconCombo" x:Uid="Appearance_TrayIconCombo" MinWidth="160" VerticalAlignment="Center" SelectionChanged="TrayIconCombo_SelectionChanged">
+                            <ComboBoxItem x:Uid="Appearance_TrayIconLocket">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <Image Width="16" Height="16" VerticalAlignment="Center" Source="ms-appx:///Assets/Square44x44Logo.png" />
+                                    <TextBlock Text="Locket" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </ComboBoxItem>
+                            <ComboBoxItem x:Uid="Appearance_TrayIconClipboard">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <FontIcon FontSize="16" Glyph="&#xE77F;" />
+                                    <TextBlock x:Uid="Appearance_TrayIconClipboardText" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </ComboBoxItem>
+                            <ComboBoxItem x:Uid="Appearance_TrayIconPaperclip">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <FontIcon FontSize="16" Glyph="&#xE723;" />
+                                    <TextBlock x:Uid="Appearance_TrayIconPaperclipText" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </ComboBoxItem>
+                            <ComboBoxItem x:Uid="Appearance_TrayIconScissors">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <FontIcon FontSize="16" Glyph="&#xE8C6;" />
+                                    <TextBlock x:Uid="Appearance_TrayIconScissorsText" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </ComboBoxItem>
+                        </ComboBox>
+                        <ToggleSwitch x:Name="ShowTrayIconToggle" x:Uid="Appearance_ShowTrayIconToggle" Toggled="ShowTrayIconToggle_Toggled" />
+                    </StackPanel>
+                </local:SettingsCard>
+                <local:SettingsCard x:Uid="Appearance_RecentCopyCard" Glyph="&#xE8C8;">
+                    <ToggleSwitch x:Name="RecentCopyToggle" x:Uid="Appearance_RecentCopyToggle" Toggled="RecentCopyToggle_Toggled" />
+                </local:SettingsCard>
+
+                <!-- ===== Popup layout ===== -->
+                <TextBlock x:Uid="Appearance_PopupLayoutSection" Style="{StaticResource SettingsSectionHeaderTextStyle}" AutomationProperties.HeadingLevel="Level2" />
+                <local:SettingsCard x:Uid="Appearance_ShowSearchCard" Glyph="&#xE721;">
+                    <StackPanel Orientation="Horizontal" Spacing="16">
+                        <ComboBox x:Name="SearchVisibilityCombo" x:Uid="Appearance_SearchVisibilityCombo" MinWidth="160" VerticalAlignment="Center" SelectionChanged="SearchVisibilityCombo_SelectionChanged">
+                            <ComboBoxItem x:Uid="Appearance_SearchAlways" />
+                            <ComboBoxItem x:Uid="Appearance_SearchDuringSearch" />
+                        </ComboBox>
+                        <ToggleSwitch x:Name="ShowSearchToggle" x:Uid="Appearance_ShowSearchToggle" Toggled="ShowSearchToggle_Toggled" />
+                    </StackPanel>
+                </local:SettingsCard>
+                <local:SettingsCard x:Uid="Appearance_ShowTitleCard" Glyph="&#xE8D2;">
+                    <ToggleSwitch x:Name="ShowTitleToggle" x:Uid="Appearance_ShowTitleToggle" Toggled="ShowTitleToggle_Toggled" />
+                </local:SettingsCard>
+                <local:SettingsCard x:Uid="Appearance_AppIconsCard" Glyph="&#xE71D;">
+                    <ToggleSwitch x:Name="AppIconsToggle" x:Uid="Appearance_AppIconsToggle" Toggled="AppIconsToggle_Toggled" />
+                </local:SettingsCard>
+                <local:SettingsCard x:Uid="Appearance_ColorSwatchCard" Glyph="&#xE790;">
+                    <ToggleSwitch x:Name="ColorSwatchToggle" x:Uid="Appearance_ColorSwatchToggle" Toggled="ColorSwatchToggle_Toggled" />
+                </local:SettingsCard>
+                <local:SettingsCard x:Uid="Appearance_ShowFooterCard" Glyph="&#xE7C3;">
+                    <ToggleSwitch x:Name="ShowFooterToggle" x:Uid="Appearance_ShowFooterToggle" Toggled="ShowFooterToggle_Toggled" />
+                </local:SettingsCard>
+                <InfoBar
+                    x:Name="FooterInfoBar"
+                    x:Uid="Appearance_FooterInfoBar"
+                    Severity="Warning"
+                    IsClosable="False" />
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

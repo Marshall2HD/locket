@@ -11,7 +11,7 @@ Nothing. Locket has no analytics, no telemetry, no crash reporting and no accoun
 
 Locket saves what you copy so you can use it again. That history stays on your device, in the app's
 local data folder (`%LOCALAPPDATA%\Packages\MarshallHD.Locket_*\LocalState\history.sqlite` for the
-Store package, removed on uninstall; `%LOCALAPPDATA%\Kleio\history.sqlite` for an unpackaged build).
+Store package, removed on uninstall; `%LOCALAPPDATA%\Locket\history.sqlite` for an unpackaged build).
 
 Locket does not save copies marked private by Windows (`ExcludeClipboardContentFromMonitorProcessing`,
 `Clipboard Viewer Ignore`, or `CanIncludeInClipboardHistory` with a zero or too-short value) or by

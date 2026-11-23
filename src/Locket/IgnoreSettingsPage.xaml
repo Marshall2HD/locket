@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="Locket.IgnoreSettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Locket"
+    Background="Transparent"
+    Loaded="Page_Loaded"
+    Unloaded="Page_Unloaded">
+    <Page.Resources>
+        <Style TargetType="ToggleSwitch" BasedOn="{StaticResource SettingsToggleSwitchStyle}" />
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock x:Uid="Ignore_Header" Style="{StaticResource SettingsPageHeaderTextStyle}" AutomationProperties.HeadingLevel="Level1" />
+
+        <ScrollViewer Grid.Row="1" Style="{StaticResource SettingsPageScrollViewerStyle}">
+            <StackPanel Style="{StaticResource SettingsPageContentStyle}">
+                <SelectorBar x:Name="SectionBar" x:Uid="Ignore_SectionBar" Margin="-4,0,0,12" SelectionChanged="SectionBar_SelectionChanged">
+                    <SelectorBarItem x:Name="AppsSectionItem" x:Uid="Ignore_AppsSectionItem" IsSelected="True" />
+                    <SelectorBarItem x:Name="FormatsSectionItem" x:Uid="Ignore_FormatsSectionItem" />
+                    <SelectorBarItem x:Name="RegexSectionItem" x:Uid="Ignore_RegexSectionItem" />
+                </SelectorBar>
+
+                <!-- ===== Applications ===== -->
+                <StackPanel x:Name="AppsSection" Spacing="4">
+                    <TextBlock x:Uid="Ignore_AppsDescription" Style="{StaticResource SettingsParagraphTextStyle}" />
+                    <local:SettingsCard x:Uid="Ignore_AllExceptCard" Glyph="&#xE71D;">
+                        <ToggleSwitch x:Name="IgnoreAllExceptToggle" x:Uid="Ignore_AllExceptToggle" Toggled="IgnoreAllExceptToggle_Toggled" />
+                    </local:SettingsCard>
+                    <local:SettingsCard x:Name="AppsHeaderCard" x:Uid="Ignore_AppsHeaderCard" Glyph="&#xE8F8;">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <DropDownButton x:Name="RunningAppsButton" x:Uid="Ignore_RunningAppsButton">
+                                <DropDownButton.Content>
+                                    <TextBlock x:Uid="Ignore_RunningAppsText" />
+                                </DropDownButton.Content>
+                                <DropDownButton.Flyout>
+                                    <MenuFlyout x:Name="RunningAppsFlyout" Placement="BottomEdgeAlignedRight" Opening="RunningAppsFlyout_Opening" />
+                                </DropDownButton.Flyout>
+                            </DropDownButton>
+                            <Button x:Name="AddAppButton" x:Uid="Ignore_AddAppButton" Click="AddAppButton_Click" Style="{StaticResource AccentButtonStyle}">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon FontSize="14" Glyph="&#xE710;" />
+                                    <TextBlock x:Uid="Ignore_AddAppText" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </local:SettingsCard>
+                    <StackPanel x:Name="AppsList" Spacing="4" />
+                    <TextBlock x:Name="NoAppsText" x:Uid="Ignore_NoApps" Style="{StaticResource SettingsParagraphTextStyle}" Margin="1,8,0,0" />
+                </StackPanel>
+
+                <!-- ===== Clipboard formats ===== -->
+                <StackPanel x:Name="FormatsSection" Spacing="4" Visibility="Collapsed">
+                    <TextBlock x:Uid="Ignore_FormatsDescription" Style="{StaticResource SettingsParagraphTextStyle}" />
+                    <TextBlock x:Name="AlwaysIgnoredText" Style="{StaticResource SettingsParagraphTextStyle}" />
+                    <TextBlock x:Uid="Ignore_FormatsHelp" Style="{StaticResource SettingsParagraphTextStyle}" />
+                    <local:SettingsCard x:Uid="Ignore_AddFormatCard" Glyph="&#xE710;">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBox x:Name="FormatTextBox" x:Uid="Ignore_FormatTextBox" Width="300" KeyDown="FormatTextBox_KeyDown" />
+                            <Button x:Name="AddFormatButton" x:Uid="Ignore_AddFormatButton" Click="AddFormatButton_Click" />
+                        </StackPanel>
+                    </local:SettingsCard>
+                    <StackPanel x:Name="FormatsList" Spacing="4" />
+                    <TextBlock x:Name="NoFormatsText" x:Uid="Ignore_NoFormats" Style="{StaticResource SettingsParagraphTextStyle}" Margin="1,8,0,0" />
+                    <Button x:Name="ResetFormatsButton" x:Uid="Ignore_ResetFormats" Margin="0,8,0,0" Click="ResetFormatsButton_Click" />
+                </StackPanel>
+
+                <!-- ===== Regular expressions ===== -->
+                <StackPanel x:Name="RegexSection" Spacing="4" Visibility="Collapsed">
+                    <TextBlock x:Uid="Ignore_RegexDescription" Style="{StaticResource SettingsParagraphTextStyle}" />
+                    <Border Style="{StaticResource SettingsCardBorderStyle}" MinHeight="0">
+                        <StackPanel Spacing="6">
+                            <TextBlock x:Uid="Ignore_Examples" Style="{StaticResource BodyStrongTextBlockStyle}" />
+                            <Grid ColumnSpacing="24" RowSpacing="4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Style="{StaticResource SettingsMonospaceTextStyle}" Text="^[a-zA-Z0-9]{50}$" />
+                                <TextBlock x:Uid="Ignore_ExampleToken" Grid.Row="0" Grid.Column="1" Style="{StaticResource SettingsDescriptionTextStyle}" VerticalAlignment="Center" />
+                                <TextBlock Grid.Row="1" Style="{StaticResource SettingsMonospaceTextStyle}" Text="^\d{6}$" />
+                                <TextBlock x:Uid="Ignore_ExampleCode" Grid.Row="1" Grid.Column="1" Style="{StaticResource SettingsDescriptionTextStyle}" VerticalAlignment="Center" />
+                                <TextBlock Grid.Row="2" Style="{StaticResource SettingsMonospaceTextStyle}" Text="^(?:\d[ -]?){13,19}$" />
+                                <TextBlock x:Uid="Ignore_ExampleCard" Grid.Row="2" Grid.Column="1" Style="{StaticResource SettingsDescriptionTextStyle}" VerticalAlignment="Center" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                    <local:SettingsCard x:Uid="Ignore_AddRegexCard" Glyph="&#xE710;">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBox x:Name="RegexTextBox" x:Uid="Ignore_RegexTextBox" Width="300" FontFamily="Cascadia Mono, Consolas" PlaceholderText="^[a-zA-Z0-9]{50}$" KeyDown="RegexTextBox_KeyDown" />
+                            <Button x:Name="AddRegexButton" x:Uid="Ignore_AddRegexButton" Click="AddRegexButton_Click" />
+                        </StackPanel>
+                    </local:SettingsCard>
+                    <InfoBar x:Name="RegexInfoBar" x:Uid="Ignore_RegexInfoBar" Severity="Error" IsClosable="True" />
+                    <StackPanel x:Name="RegexList" Spacing="4" />
+                    <TextBlock x:Name="NoRegexText" x:Uid="Ignore_NoRegex" Style="{StaticResource SettingsParagraphTextStyle}" Margin="1,8,0,0" />
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

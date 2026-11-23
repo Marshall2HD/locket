@@ -7,19 +7,19 @@ Maccy; look and feel follow the Windows 11 / Fluent design guidelines.
 ## Layout
 
 ```
-Kleio.sln
+Locket.sln
 Directory.Build.props / .targets / Directory.Packages.props   central build settings + NuGet versions
-src/Kleio/                     the app (single-project MSIX)
+src/Locket/                     the app (single-project MSIX)
   App.xaml(.h/.cpp)            entry point, wires AppController
   AppController.h/.cpp         composition root + app-level actions (Maccy's AppState/AppDelegate)
   *.idl, *.xaml, *.xaml.h/.cpp WinRT classes: windows, pages, controls, view models (MUST stay in root)
   Themes/*.xaml                resource dictionaries merged by App.xaml
   Core/                        platform-neutral logic: settings, model, storage, search, sorting
   Platform/                    Win32 integration: clipboard, hot keys, hook, tray, paste, OCR, ...
-  Assets/                      logos, Kleio.ico, Sounds/*.wav
+  Assets/                      logos, Locket.ico, Sounds/*.wav
   Strings/<lang>/Resources.resw  user-visible strings, en-US + 42 translations (MRT Core)
   Strings.h/.cpp               string lookup (Get/Format), localized key names, Language setting
-tests/Kleio.Core.Tests/        console test runner for Core (built and run in CI)
+tests/Locket.Core.Tests/        console test runner for Core (built and run in CI)
 tools/generate_assets.py       regenerates the logo PNGs/ICO
 tools/check_translations.py    checks the .resw files against en-US, the XAML and the code
 ```
@@ -34,8 +34,8 @@ or the XAML compiler can't find its implementation header for `XamlTypeInfo.g.cp
 ## Conventions
 
 * C++20, `/W4`, `NOMINMAX`, `WIN32_LEAN_AND_MEAN`. Every `.cpp` starts with `#include "pch.h"`.
-* Plain C++ lives in `namespace Kleio`; WinRT implementation types in `winrt::Kleio::implementation`.
-* Include project headers relative to `src/Kleio` (e.g. `#include "Core/History.h"`).
+* Plain C++ lives in `namespace Locket`; WinRT implementation types in `winrt::Locket::implementation`.
+* Include project headers relative to `src/Locket` (e.g. `#include "Core/History.h"`).
 * Everything runs on the UI thread (the XAML dispatcher thread, which also pumps the Win32 messages
   of the hidden `MessageWindow`). Background work (OCR, HTTP) uses coroutines and hops back with
   `co_await wil::resume_foreground(dispatcherQueue)`.
@@ -140,7 +140,7 @@ Select flow: popup → `AppController::Select(item, modifiers)` → hide popup �
 `CopyItem` (`ClipboardService::Copy`, sound, notification) → (optionally) `PasteService::RestoreForegroundWindow` + `Paste`.
 
 Scripting flow: `locket --get 2` → `Main.cpp` parses it (`Core/Scripting`) instead of redirecting the
-activation → `ScriptingPipe::RunClient` connects to `\\.\pipe\Kleio.Scripting.<SID>.<session>`
+activation → `ScriptingPipe::RunClient` connects to `\\.\pipe\Locket.Scripting.<SID>.<session>`
 (starting Locket with `--background` if no instance is registered) → the running instance's
 `ScriptingPipe::Server` thread hands the command to `AppController::RunScript` on the UI thread →
 the result (exit code, error, payload) goes back over the pipe and the client prints it to its

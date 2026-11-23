@@ -51,16 +51,16 @@ jobs:
         run: |
           $version = '${{ github.ref_name }}'.Substring(1)
           if ($version -notmatch '^\d+\.\d+\.\d+$') { throw "Tag must look like v1.2.3, not ${{ github.ref_name }}" }
-          $manifest = 'src\Kleio\Package.appxmanifest'
+          $manifest = 'src\Locket\Package.appxmanifest'
           (Get-Content $manifest -Raw) -replace '(<Identity[^>]*?Version=")[^"]+"', "`${1}$version.0`"" | Set-Content $manifest -NoNewline
           Select-String -Path $manifest -Pattern 'Version="' | Select-Object -First 1
 
       - name: Restore
-        run: msbuild Kleio.sln /t:Restore /p:Configuration=${{ env.Configuration }} /p:Platform=${{ matrix.platform }} /v:minimal
+        run: msbuild Locket.sln /t:Restore /p:Configuration=${{ env.Configuration }} /p:Platform=${{ matrix.platform }} /v:minimal
 
       - name: Build and package
         run: >-
-          msbuild Kleio.sln /m /v:minimal "/clp:ErrorsOnly;Summary" /bl:artifacts\build.binlog
+          msbuild Locket.sln /m /v:minimal "/clp:ErrorsOnly;Summary" /bl:artifacts\build.binlog
           /p:Configuration=${{ env.Configuration }}
           /p:Platform=${{ matrix.platform }}
           /p:AppxBundle=Never
@@ -142,18 +142,18 @@ jobs:
 
       - uses: microsoft/setup-msbuild@v2
 
-      - name: Build Kleio.Core.Tests
+      - name: Build Locket.Core.Tests
         run: >-
-          msbuild tests\Kleio.Core.Tests\Kleio.Core.Tests.vcxproj /m /v:minimal "/clp:ErrorsOnly;Summary"
+          msbuild tests\Locket.Core.Tests\Locket.Core.Tests.vcxproj /m /v:minimal "/clp:ErrorsOnly;Summary"
           /p:Configuration=Release
           /p:Platform=${{ matrix.platform }}
 
-      - name: Run Kleio.Core.Tests
+      - name: Run Locket.Core.Tests
         shell: pwsh
         run: |
-          & "tests\Kleio.Core.Tests\bin\${{ matrix.platform }}\Release\Kleio.Core.Tests.exe"
+          & "tests\Locket.Core.Tests\bin\${{ matrix.platform }}\Release\Locket.Core.Tests.exe"
           if ($LASTEXITCODE -ne 0) {
-            Write-Error "Kleio.Core.Tests failed ($LASTEXITCODE failed checks)"
+            Write-Error "Locket.Core.Tests failed ($LASTEXITCODE failed checks)"
             exit 1
           }
 

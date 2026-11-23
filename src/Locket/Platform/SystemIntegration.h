@@ -1,0 +1,30 @@
+#pragma once
+
+#include <winrt/Windows.Foundation.h>
+
+namespace Locket::SystemIntegration
+{
+    // ---- Launch at login (MSIX StartupTask "LocketStartup") ----
+    winrt::Windows::Foundation::IAsyncOperation<bool> IsLaunchAtLoginEnabled();
+    // Returns the resulting state (may be false if the user disabled it in Task Manager/Settings).
+    winrt::Windows::Foundation::IAsyncOperation<bool> SetLaunchAtLoginEnabled(bool enable);
+
+    // Opens Settings > System > Clipboard (ms-settings:clipboard).
+    void OpenWindowsClipboardSettings();
+    // Opens Settings > System > Notifications (ms-settings:notifications); Maccy's "Notifications
+    // and sounds" link to the macOS notification settings.
+    void OpenWindowsNotificationSettings();
+    // False when Windows blocks Locket's notifications (turned off for Locket or for all apps, or by
+    // policy): AppNotificationManager::Setting() != Enabled.
+    bool AreAppNotificationsEnabled();
+
+    // ---- Misc ----
+    void OpenUri(wchar_t const* uri);
+    // Package version "1.2.3" (from Package::Current().Id().Version()).
+    winrt::hstring AppVersion();
+    // True when the package was installed from the Microsoft Store (signed by the Store), which
+    // updates the app itself: the GitHub update checker is then off and its UI hidden.
+    bool InstalledFromStore();
+    // Plays Assets\Sounds\<name>.wav asynchronously (PlaySoundW, SND_ASYNC|SND_FILENAME).
+    void PlaySoundNamed(wchar_t const* name);
+}

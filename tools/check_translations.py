@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Checks Kleio's string resources (src/Kleio/Strings/<language>/Resources.resw).
+"""Checks Locket's string resources (src/Locket/Strings/<language>/Resources.resw).
 
 * every .resw parses and has no duplicate keys;
 * every language has exactly the keys of en-US and keeps its {0}-style placeholders;
@@ -18,7 +18,7 @@ import sys
 import xml.etree.ElementTree as ET
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-APP = ROOT / 'src' / 'Kleio'
+APP = ROOT / 'src' / 'Locket'
 STRINGS = APP / 'Strings'
 SOURCE = 'en-US'
 PLACEHOLDER = re.compile(r'\{\d\}')

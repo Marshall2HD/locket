@@ -1,4 +1,4 @@
-"""Generates Kleio's MSIX logo assets and the app .ico from a single vector-ish drawing.
+"""Generates Locket's MSIX logo assets and the app .ico from a single vector-ish drawing.
 
 Run from the repository root:  python tools/generate_assets.py
 Requires Pillow.
@@ -7,7 +7,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 
 ROOT = Path(__file__).resolve().parent.parent
-ASSETS = ROOT / "src" / "Kleio" / "Assets"
+ASSETS = ROOT / "src" / "Locket" / "Assets"
 S = 1024  # master canvas size
 
 
@@ -16,7 +16,7 @@ def lerp(a, b, t):
 
 
 def glyph(size, plate=True):
-    """Draws the Kleio mark: a clipboard holding a short stack of history lines."""
+    """Draws the Locket mark: a clipboard holding a short stack of history lines."""
     img = Image.new("RGBA", (S, S), (0, 0, 0, 0))
     if plate:
         grad = Image.new("RGBA", (S, S))
@@ -63,7 +63,7 @@ def main():
     for size in (16, 24, 32, 48, 256):
         save_png(f"Square44x44Logo.targetsize-{size}_altform-unplated.png", size, size, 1.0)
     big = glyph(256)
-    big.save(ASSETS / "Kleio.ico", sizes=[(16, 16), (20, 20), (24, 24), (32, 32), (40, 40), (48, 48), (64, 64), (256, 256)])
+    big.save(ASSETS / "Locket.ico", sizes=[(16, 16), (20, 20), (24, 24), (32, 32), (40, 40), (48, 48), (64, 64), (256, 256)])
     glyph(512).save(ROOT / "docs" / "logo.png")
 
 

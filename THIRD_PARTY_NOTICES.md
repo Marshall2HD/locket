@@ -9,7 +9,7 @@ following third-party works.
 
 Locket is a port of Maccy, the macOS clipboard manager. Its design, behaviour and much of its logic
 (clipboard monitoring and filtering, history model, search, sorting, paste stack, settings) are
-ported from Maccy's Swift sources. The sounds in `src/Kleio/Assets/Sounds/` (`Knock.wav`,
+ported from Maccy's Swift sources. The sounds in `src/Locket/Assets/Sounds/` (`Knock.wav`,
 `Write.wav`) are Maccy's `Knock.caf` and `Write.caf` converted to WAV.
 
 ```
@@ -40,7 +40,7 @@ THE SOFTWARE.
 
 <https://github.com/krisk/fuse-swift>
 
-Locket's fuzzy search (`src/Kleio/Core/Search.*`) is a C++ port of the Bitap-based fuzzy matching
+Locket's fuzzy search (`src/Locket/Core/Search.*`) is a C++ port of the Bitap-based fuzzy matching
 of Fuse-swift 1.4.0, which Maccy uses.
 
 ```

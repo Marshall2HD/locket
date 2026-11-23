@@ -12,7 +12,7 @@ another one for Locket only (restart Locket to apply it), like a per-app languag
 Shortcuts are shown with the key names printed on keyboards in that language (*Strg+Umschalt+C*
 in German); settings and the command line always use the English names.
 
-The strings live in `src/Kleio/Strings/<language>/Resources.resw`, one file per language; `en-US`
+The strings live in `src/Locket/Strings/<language>/Resources.resw`, one file per language; `en-US`
 is the source. Wherever Maccy has the same text, the translation comes from
 [Maccy's translations on Weblate](https://hosted.weblate.org/projects/maccy/), adapted to Windows
 (*Ctrl* instead of ⌘, *notification area* instead of menu bar, *Settings* instead of Preferences).
@@ -23,10 +23,10 @@ deserve a review by native speakers.
 
 To improve a translation, edit the `<value>` of a key in the language's `Resources.resw` (any text
 editor, or the resource editor of Visual Studio) and open a pull request. Keep `{0}`-style
-placeholders and terms such as `--get` or `Kleio.Transient` as they are, and use the key names of
+placeholders and terms such as `--get` or `Locket.Transient` as they are, and use the key names of
 your keyboard in shortcuts. To add a language, copy `en-US` to a new folder named with the
 BCP-47 tag Windows uses (for example `sk` or `sr-Latn`), translate it and add the language to the
-list in `src/Kleio/Strings.cpp`. Then run:
+list in `src/Locket/Strings.cpp`. Then run:
 
 ```powershell
 python tools/check_translations.py
