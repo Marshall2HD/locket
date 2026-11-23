@@ -65,7 +65,7 @@ namespace Locket
             try
             {
                 auto dispatcher = [] {
-                    auto const& self = Instance();
+                    auto const& self = KeyboardHook::Instance();
                     std::scoped_lock lock{ self.m_configMutex };
                     return self.m_dispatcher;
                 }();
