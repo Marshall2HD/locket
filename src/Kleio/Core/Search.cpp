@@ -170,14 +170,16 @@ namespace Kleio
             std::vector<std::uint8_t> matchMask(static_cast<std::size_t>(textLength), 0);
 
             bool foundExact = false;
+            double bestExactScore = 1.0;
             // Get all exact matches, here for speed up
             auto index = IndexOf(text, pattern.text, bestLocation);
             while (index)
             {
                 foundExact = true;
                 const std::int64_t i = *index;
-                const double score = CalculateScore(pattern.len, 0, i, location, distance);
-                threshold = std::min(threshold, score);
+                const double exactScore = CalculateScore(pattern.len, 0, i, location, distance);
+                bestExactScore = std::min(bestExactScore, exactScore);
+                threshold = std::min(threshold, exactScore);
                 bestLocation = i + pattern.len;
                 index = IndexOf(text, pattern.text, bestLocation);
 
@@ -187,9 +189,9 @@ namespace Kleio
                 }
             }
 
-            if (foundExact)
+            if (pattern.len > 64 && foundExact)
             {
-                return { 0.0, FindRanges(matchMask) };
+                return { std::min(bestExactScore, kThreshold), FindRanges(matchMask) };
             }
 
             // Reset the best location
@@ -254,6 +256,12 @@ namespace Kleio
                         }
                     }
 
+                    // A match is found
+                    if (charMatch != 0)
+                    {
+                        matchMask[static_cast<std::size_t>(currentLocation)] = 1;
+                    }
+
                     const auto uj = static_cast<std::size_t>(j);
                     // First pass: exact match
                     bitArr[uj] = ((bitArr[uj + 1] << 1) | 1) & charMatch;
@@ -274,10 +282,6 @@ namespace Kleio
                             // Indeed it is
                             threshold = score;
                             bestLocation = currentLocation;
-                            if (charMatch != 0 && currentLocation < textLength)
-                            {
-                                matchMask[static_cast<std::size_t>(currentLocation)] = 1;
-                            }
 
                             if (!(currentLocation > location))
                             {

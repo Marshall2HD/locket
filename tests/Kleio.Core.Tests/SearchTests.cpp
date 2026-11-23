@@ -73,20 +73,20 @@ TEST(Search_Fuzzy_MaccyVectors)
     const auto items = MaccyItems();
     auto search = [&](std::wstring_view query) { return Search{}.Run(query, items, SearchMode::Fuzzy); };
     CheckResults(search(L"z"), items, {
-        { 0, 0.0, { R(10, 10) } },
-        { 1, 0.0, { R(8, 8), R(10, 10) } },
-        { 2, 0.0, { R(8, 10) } },
+        { 1, 0.08, { R(8, 8), R(10, 10) } },
+        { 2, 0.08, { R(8, 10) } },
+        { 0, 0.1, { R(10, 10) } },
     });
     CheckResults(search(L"foo"), items, {
         { 0, 0.0, { R(0, 2) } },
         { 1, 0.0, { R(0, 2) } },
     });
     CheckResults(search(L"za"), items, {
-        { 1, 0.0, { R(8, 9) } },
+        { 1, 0.08, { R(5, 5), R(8, 9) } },
         { 0, 0.54, { R(5, 5), R(9, 10) } },
         { 2, 0.58, { R(8, 10) } },
     });
-    CheckResults(search(L"yyy"), items, { { 2, 0.0, { R(4, 6) } } });
+    CheckResults(search(L"yyy"), items, { { 2, 0.04, { R(4, 6) } } });
     CheckResults(search(L"fbb"), items, {
         { 0, 0.6666666666666666, { R(0, 0), R(4, 4), R(8, 8) } },
         { 1, 0.6666666666666666, { R(0, 0), R(4, 4) } },
@@ -122,7 +122,11 @@ TEST(Search_Fuzzy_LongPatterns)
     CHECK_EQ(exact.size(), std::size_t{ 1 });
     if (!exact.empty())
     {
-        CHECK(exact[0].score.has_value() && *exact[0].score == 0.0);
+        CHECK(exact[0].score.has_value());
+        if (exact[0].score)
+        {
+            CHECK_NEAR(*exact[0].score, 0.07, 1e-9);
+        }
         CHECK_EQ(exact[0].ranges, (std::vector<TextRange>{ TextRange{ 7, 77 } }));
     }
 
