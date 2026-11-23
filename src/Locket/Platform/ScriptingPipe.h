@@ -6,6 +6,7 @@
 
 #include <atomic>
 #include <functional>
+#include <memory>
 #include <mutex>
 #include <thread>
 #include <vector>
@@ -45,9 +46,15 @@ namespace Locket::ScriptingPipe
         winrt::Microsoft::UI::Dispatching::DispatcherQueue m_dispatcher{ nullptr };
         wil::unique_event m_stop;
         std::atomic<bool> m_stopping{ false };
+        struct Worker
+        {
+            std::thread thread;
+            std::shared_ptr<std::atomic_bool> done;
+        };
+
         std::thread m_thread;
         std::mutex m_workersMutex;
-        std::vector<std::thread> m_workers;
+        std::vector<Worker> m_workers;
         std::atomic<unsigned int> m_activeWorkers{ 0 };
     };
 

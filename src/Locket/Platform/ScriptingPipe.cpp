@@ -63,6 +63,23 @@ namespace Locket::ScriptingPipe
             return true;
         }
 
+        // Synchronous full-buffer write for regular disk files (without OVERLAPPED offset 0).
+        bool WriteAllFile(HANDLE file, std::uint8_t const* data, std::size_t size)
+        {
+            while (size > 0)
+            {
+                const DWORD chunk = static_cast<DWORD>((std::min)(size, std::size_t{ 1 } << 20));
+                DWORD written = 0;
+                if (!::WriteFile(file, data, chunk, &written, nullptr) || written == 0)
+                {
+                    return false;
+                }
+                data += written;
+                size -= written;
+            }
+            return true;
+        }
+
         // Overlapped (server side) transfer that gives up when `stop` is signalled.
         bool TransferAsync(HANDLE pipe, HANDLE stop, bool write, std::uint8_t* data, std::size_t size)
         {
@@ -524,7 +541,7 @@ namespace Locket::ScriptingPipe
         std::scoped_lock lock{ m_workersMutex };
         for (auto& worker : m_workers)
         {
-            if (worker.joinable()) worker.join();
+            if (worker.thread.joinable()) worker.thread.join();
         }
         m_workers.clear();
     }
@@ -603,20 +620,36 @@ namespace Locket::ScriptingPipe
             }
             if (m_stopping) break;
             ++m_activeWorkers;
+            auto done = std::make_shared<std::atomic_bool>(false);
             std::scoped_lock lock{ m_workersMutex };
-            m_workers.emplace_back([this, pipe = std::move(pipe)]() mutable {
-                try
+            for (auto it = m_workers.begin(); it != m_workers.end();)
+            {
+                if (it->done->load(std::memory_order_acquire))
                 {
-                    Serve(pipe.get());
-                    ::FlushFileBuffers(pipe.get());
-                    ::DisconnectNamedPipe(pipe.get());
+                    if (it->thread.joinable()) it->thread.join();
+                    it = m_workers.erase(it);
                 }
-                catch (...)
+                else
                 {
-                    Log(L"request failed");
+                    ++it;
                 }
-                --m_activeWorkers;
-            });
+            }
+            m_workers.push_back(Worker{
+                std::thread([this, pipe = std::move(pipe), done]() mutable {
+                    try
+                    {
+                        Serve(pipe.get());
+                        ::FlushFileBuffers(pipe.get());
+                        ::DisconnectNamedPipe(pipe.get());
+                    }
+                    catch (...)
+                    {
+                        Log(L"request failed");
+                    }
+                    --m_activeWorkers;
+                    done->store(true, std::memory_order_release);
+                }),
+                done });
         }
         winrt::uninit_apartment();
     }
@@ -758,7 +791,7 @@ namespace Locket::ScriptingPipe
                 path = command.output;
             }
             wil::unique_hfile file{ ::CreateFileW(path.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr) };
-            if (!file || !TransferSync(file.get(), true, payload->data(), payload->size()))
+            if (!file || !WriteAllFile(file.get(), payload->data(), payload->size()))
             {
                 if (file)
                 {

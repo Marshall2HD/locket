@@ -4,6 +4,8 @@
 
 #include <cmath>
 #include <cwchar>
+#include <list>
+#include <map>
 
 #pragma comment(lib, "user32.lib")
 #pragma comment(lib, "kernel32.lib")
@@ -16,6 +18,52 @@ namespace Locket::AppInfo
     namespace
     {
         std::mutex g_cacheMutex;
+
+        template <typename Value>
+        class BoundedLru
+        {
+        public:
+            explicit BoundedLru(std::size_t capacity) noexcept : m_capacity(capacity) {}
+
+            bool TryGet(std::wstring const& key, Value& out)
+            {
+                auto it = m_map.find(key);
+                if (it == m_map.end())
+                {
+                    return false;
+                }
+                m_order.splice(m_order.begin(), m_order, it->second.orderIt);
+                out = it->second.value;
+                return true;
+            }
+
+            void Put(std::wstring key, Value value)
+            {
+                if (auto it = m_map.find(key); it != m_map.end())
+                {
+                    it->second.value = std::move(value);
+                    m_order.splice(m_order.begin(), m_order, it->second.orderIt);
+                    return;
+                }
+                if (m_map.size() >= m_capacity && !m_order.empty())
+                {
+                    m_map.erase(m_order.back());
+                    m_order.pop_back();
+                }
+                m_order.push_front(key);
+                m_map.emplace(std::move(key), Entry{ std::move(value), m_order.begin() });
+            }
+
+        private:
+            struct Entry
+            {
+                Value value;
+                std::list<std::wstring>::iterator orderIt;
+            };
+            std::size_t m_capacity;
+            std::list<std::wstring> m_order;
+            std::map<std::wstring, Entry> m_map;
+        };
 
         std::wstring ProcessPath(DWORD pid)
         {
@@ -117,12 +165,13 @@ namespace Locket::AppInfo
                 return {};
             }
 
-            static std::map<std::wstring, std::wstring> cache;
+            static BoundedLru<std::wstring> cache{ 512 };
             {
                 std::lock_guard lock{ g_cacheMutex };
-                if (auto it = cache.find(exePath); it != cache.end())
+                std::wstring cached;
+                if (cache.TryGet(exePath, cached))
                 {
-                    return it->second;
+                    return cached;
                 }
             }
 
@@ -182,7 +231,7 @@ namespace Locket::AppInfo
             }
 
             std::lock_guard lock{ g_cacheMutex };
-            cache[exePath] = name;
+            cache.Put(exePath, name);
             return name;
         }
         catch (...)
@@ -205,13 +254,14 @@ namespace Locket::AppInfo
             }
             const int size = (std::max)(16, static_cast<int>(std::lround(32.0 * scale)));
 
-            static std::map<std::wstring, std::vector<std::uint8_t>> cache;
+            static BoundedLru<std::vector<std::uint8_t>> cache{ 256 };
             const std::wstring key = exePath + L"|" + std::to_wstring(size);
             {
                 std::lock_guard lock{ g_cacheMutex };
-                if (auto it = cache.find(key); it != cache.end())
+                std::vector<std::uint8_t> cached;
+                if (cache.TryGet(key, cached))
                 {
-                    return it->second;
+                    return cached;
                 }
             }
 
@@ -241,7 +291,7 @@ namespace Locket::AppInfo
             }
 
             std::lock_guard lock{ g_cacheMutex };
-            cache[key] = png;
+            cache.Put(key, png);
             return png;
         }
         catch (...)

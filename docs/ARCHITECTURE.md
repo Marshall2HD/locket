@@ -101,7 +101,7 @@ names are the BCP-47 tags Windows uses (`zh-Hans`, `pt-PT`, `nb-NO`, `ku-Arab` f
 | UserDefaults | `ApplicationData.LocalSettings` |
 | Vision OCR for image titles | `Windows.Media.Ocr` |
 | LaunchAtLogin | MSIX `StartupTask` |
-| Sparkle (daily check, Install / Skip this version) | `UpdateScheduler` (daily GitHub Releases check; off for Store installs, which the Store updates) + `InstallUpdate` (download `.msix`, `PackageManager.AddPackageAsync`, restart) |
+| Sparkle (daily check, Install / Skip this version) | `UpdateScheduler` (daily GitHub Releases check; compiled out in Store builds) + `InstallUpdate` (validates `vX.Y.Z` release tag, opens release page in browser) |
 | App Intents (Get, Select, Delete, Clear) | `locket --get/--select/--delete/--clear` over a named pipe (`Platform/ScriptingPipe`) |
 | `*.lproj/*.strings` (Weblate) | `Strings/<lang>/Resources.resw` (MRT Core), translations taken from Maccy's |
 | Per-app language (System Settings) | *Settings → General → Language* (`PrimaryLanguageOverride`) |
@@ -127,7 +127,7 @@ App ──► AppController ──► Settings (LocalSettings)            Core
                      ├──► KeyboardHook (Win+V, paste-stack Ctrl+V detection)
                      ├──► PasteService (SendInput Ctrl+V)
                      ├──► ScriptingPipe::Server ◄── locket --get/--select/... (Main.cpp → RunClient)
-                     ├──► UpdateScheduler / InstallUpdate (GitHub releases, PackageManager)
+                     ├──► UpdateScheduler / InstallUpdate (GitHub Releases tag check, browser open)
                      ├──► PopupWindow ──► HistoryItemViewModel / HistoryItemRow       UI
                      └──► SettingsWindow ──► *SettingsPage, ShortcutRecorder
 ```

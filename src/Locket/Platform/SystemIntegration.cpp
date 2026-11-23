@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Platform/SystemIntegration.h"
 
+#include <appmodel.h>
 #include <mmsystem.h>
 
 #include <winrt/Microsoft.Windows.AppNotifications.h>
@@ -142,15 +143,24 @@ namespace Locket::SystemIntegration
 
     bool InstalledFromStore()
     {
+#ifdef LOCKET_STORE_BUILD
+        return true;
+#else
         try
         {
+            UINT32 length = 0;
+            if (GetCurrentPackageFullName(&length, nullptr) == APPMODEL_ERROR_NO_PACKAGE)
+            {
+                return false;
+            }
             return winrt::Windows::ApplicationModel::Package::Current().SignatureKind() ==
                 winrt::Windows::ApplicationModel::PackageSignatureKind::Store;
         }
         catch (...)
         {
-            return false;
+            return true;
         }
+#endif
     }
 
     void PlaySoundNamed(wchar_t const* name)

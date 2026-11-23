@@ -197,7 +197,7 @@
     <value>பயன்பாடு பற்றி மேலும் வாசிக்க.</value>
   </data>
   <data name="Popup_QuitTooltip" xml:space="preserve">
-    <value>விண்ணப்பத்தை விட்டு.</value>
+    <value>பயன்பாட்டிலிருந்து வெளியேறு.</value>
   </data>
   <data name="Popup_Empty" xml:space="preserve">
     <value>இங்கே பார்க்க எதையாவது நகலெடுக்கவும்.</value>
@@ -221,7 +221,7 @@
     <value>பின் செய்ய {0} ஐ அழுத்தவும்.</value>
   </data>
   <data name="Popup_PressToUnpin" xml:space="preserve">
-    <value>முள்ளை அகற்ற {0} ஐ அழுத்தவும்.</value>
+    <value>பின்னை நீக்க {0} ஐ அழுத்தவும்.</value>
   </data>
   <data name="Popup_PressToDelete" xml:space="preserve">
     <value>நீக்க {0} ஐ அழுத்தவும்.</value>
@@ -749,7 +749,7 @@
     <value>சேமி</value>
   </data>
   <data name="Storage_SaveDescription.Text" xml:space="preserve">
-    <value>நகலெடுக்கப்பட்ட உள்ளடக்கத்தை எந்த வகையான சேமிக்க வேண்டும் என்பதை மாற்றவும்.</value>
+    <value>நகலெடுக்கப்பட்ட எந்த வகை உள்ளடக்கங்களைச் சேமிக்க வேண்டும் என்பதை மாற்றவும்.</value>
   </data>
   <data name="Storage_FilesCard.Header" xml:space="preserve">
     <value>கோப்புகள்</value>
@@ -794,13 +794,13 @@
     <value>வரலாற்றின் அளவு</value>
   </data>
   <data name="Storage_SortByCard.Header" xml:space="preserve">
-    <value>வழங்கியவர்</value>
+    <value>வரிசைப்படுத்து</value>
   </data>
   <data name="Storage_SortByCard.Description" xml:space="preserve">
     <value>வரலாற்றில் உருப்படிகளின் வரிசை. இயல்புநிலை: கடைசி நகலின் நேரம்.</value>
   </data>
   <data name="Storage_SortByCombo.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>வழங்கியவர்</value>
+    <value>வரிசைப்படுத்து</value>
   </data>
   <data name="Storage_SortLastCopied.Content" xml:space="preserve">
     <value>கடைசி நகலின் நேரம்</value>
@@ -1088,7 +1088,7 @@
     <value>இந்தக் கிளிப்போர்டு வடிவங்களில் ஏதேனும் ஒன்றைக் கொண்ட நகல்கள் சேமிக்கப்படாது. இயல்பாக Locket.Transient பட்டியலில் உள்ளது; அதை நீக்கி நீங்கள் விரும்பும் தனிப்பயன் வடிவங்களைச் சேர்க்கலாம்.</value>
   </data>
   <data name="Ignore_FormatsHelp.Text" xml:space="preserve">
-    <value>ஒரு வடிவத்தின் பெயரைக் கண்டறிய, பயன்பாட்டில் எதையாவது நகலெடுத்து NirSoft InsideClipboard போன்ற காட்சியி மூலம் கிளிப்போர்டைப் பாருங்கள். பதிவுசெய்யப்பட்ட வடிவங்களை (பெயர்கள், எண்கள் அல்ல) மட்டுமே சேர்க்க முடியும்.</value>
+    <value>ஒரு வடிவத்தின் பெயரைக் கண்டறிய, பயன்பாட்டில் எதையாவது நகலெடுத்து NirSoft InsideClipboard போன்ற கிளிப்போர்டு பார்வையி மூலம் பாருங்கள். பதிவுசெய்யப்பட்ட வடிவங்களை (பெயர்கள், எண்கள் அல்ல) மட்டுமே பட்டியலிட முடியும்.</value>
   </data>
   <data name="Ignore_AddFormatCard.Header" xml:space="preserve">
     <value>கிளிப்போர்டு வடிவத்தைச் சேர்</value>
@@ -1205,13 +1205,13 @@ locket.exe --resume</value>
     <value>அழித்தல்</value>
   </data>
   <data name="Advanced_ClearOnQuitCard.Header" xml:space="preserve">
-    <value>வெளியேறுவது குறித்த வரலாறு</value>
+    <value>வெளியேறும்போது வரலாற்றை அழி</value>
   </data>
   <data name="Advanced_ClearOnQuitCard.Description" xml:space="preserve">
-    <value>பயன்பாட்டிலிருந்து விலகுவதற்கு முன் தானாகவே இணைக்கப்படாத அனைத்து பொருட்களையும் தானாக அகற்றவும்.</value>
+    <value>பயன்பாட்டிலிருந்து வெளியேறுவதற்கு முன் பின் செய்யப்படாத அனைத்து உருப்படிகளையும் தானாக அகற்றவும்.</value>
   </data>
   <data name="Advanced_ClearOnQuitToggle.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>வெளியேறுவது குறித்த வரலாறு</value>
+    <value>வெளியேறும்போது வரலாற்றை அழி</value>
   </data>
   <data name="Advanced_ClearSystemClipboardCard.Header" xml:space="preserve">
     <value>கணினி கிளிப்போர்டையும் அழிக்கவும்</value>

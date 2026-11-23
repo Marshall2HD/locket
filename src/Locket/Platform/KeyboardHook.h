@@ -44,7 +44,7 @@ namespace Locket
     private:
         KeyboardHook() = default;
         ~KeyboardHook();
-        void UpdateHook();
+        void UpdateHook(bool resetState = true);
         void HookThread();
         void ResetHookState() noexcept;
         static LRESULT CALLBACK HookProc(int code, WPARAM wParam, LPARAM lParam);

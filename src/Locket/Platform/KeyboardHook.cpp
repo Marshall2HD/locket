@@ -11,19 +11,7 @@ namespace Locket
         // Unassigned virtual key. Injected while Win is held so that releasing Win does not open Start.
         constexpr WORD DummyKey = 0xE8;
 
-        // Hook state. The hook runs on the UI thread (the thread that installed it), so plain
-        // variables are sufficient.
-        // Intentionally leaked so that no COM release runs during static destruction.
-        winrt::Microsoft::UI::Dispatching::DispatcherQueue& Queue()
-        {
-            // winrt projected types delete operator new; wrap the handle in a plain struct.
-            struct Holder
-            {
-                winrt::Microsoft::UI::Dispatching::DispatcherQueue queue{ nullptr };
-            };
-            static auto* holder = new Holder{};
-            return holder->queue;
-        }
+        // Hook state. Used on the dedicated hook thread (reset only on config changes).
         bool g_leftWinDown = false;
         bool g_rightWinDown = false;
         DWORD g_swallowingKey = 0;       // main key of an intercepted shortcut; swallow its repeats and key-up
@@ -76,16 +64,19 @@ namespace Locket
 
             try
             {
-                if (auto const& queue = Queue(); queue && queue.TryEnqueue(raise))
+                auto dispatcher = [] {
+                    auto const& self = Instance();
+                    std::scoped_lock lock{ self.m_configMutex };
+                    return self.m_dispatcher;
+                }();
+                if (dispatcher)
                 {
-                    return;
+                    dispatcher.TryEnqueue(raise);
                 }
             }
             catch (...)
             {
             }
-            // No dispatcher queue (should not happen): raise synchronously.
-            raise();
         }
     }
 
@@ -137,7 +128,7 @@ namespace Locket
 
     void KeyboardHook::Refresh()
     {
-        UpdateHook();
+        UpdateHook(false);
     }
 
     void KeyboardHook::ResetHookState() noexcept
@@ -148,14 +139,13 @@ namespace Locket
         g_pasteVDown = g_pasteInsertDown = false;
     }
 
-    void KeyboardHook::UpdateHook()
+    void KeyboardHook::UpdateHook(bool resetState)
     {
         bool needed = false;
         {
             std::scoped_lock lock{ m_configMutex };
             needed = !m_shortcuts.empty() || !m_blocked.empty() || m_detectPaste;
             m_dispatcher = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
-            Queue() = m_dispatcher;
         }
         if (needed && !m_thread.joinable())
         {
@@ -166,7 +156,7 @@ namespace Locket
         }
         if (m_thread.joinable())
         {
-            PostThreadMessageW(m_threadId.load(), WM_APP + 42, 0, 0);
+            PostThreadMessageW(m_threadId.load(), resetState ? (WM_APP + 42) : (WM_APP + 43), 0, 0);
         }
         if (!needed && m_thread.joinable())
         {
@@ -187,9 +177,12 @@ namespace Locket
         m_ready.SetEvent();
         while (GetMessageW(&message, nullptr, 0, 0) > 0)
         {
-            if (message.message == WM_APP + 42)
+            if (message.message == WM_APP + 42 || message.message == WM_APP + 43)
             {
-                ResetHookState(); // config changed or a health refresh was requested
+                if (message.message == WM_APP + 42)
+                {
+                    ResetHookState(); // config changed
+                }
                 if (!m_hook)
                 {
                     m_hook = SetWindowsHookExW(WH_KEYBOARD_LL, &KeyboardHook::HookProc, GetModuleHandleW(nullptr), 0);
@@ -237,6 +230,17 @@ namespace Locket
                     else if (vk == VK_RWIN && (down || up))
                     {
                         g_rightWinDown = down;
+                    }
+                    if (!injected)
+                    {
+                        if (vk != VK_LWIN && g_leftWinDown && !IsDown(VK_LWIN))
+                        {
+                            g_leftWinDown = false;
+                        }
+                        if (vk != VK_RWIN && g_rightWinDown && !IsDown(VK_RWIN))
+                        {
+                            g_rightWinDown = false;
+                        }
                     }
 
                     // ---- Win-key shortcuts Windows keeps for itself (Win+V, Win+Shift+C, ...) ----
