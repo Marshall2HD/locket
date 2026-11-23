@@ -67,6 +67,7 @@ namespace Kleio::ScriptingPipe
         bool TransferAsync(HANDLE pipe, HANDLE stop, bool write, std::uint8_t* data, std::size_t size)
         {
             wil::unique_event io{ wil::EventOptions::ManualReset };
+            HANDLE handles[2] = { io.get(), stop };
             while (size > 0)
             {
                 DWORD const chunk = static_cast<DWORD>((std::min)(size, std::size_t{ 1 } << 20));
