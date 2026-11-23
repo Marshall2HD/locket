@@ -310,9 +310,6 @@ Sélectionnez avec Maj pour tout supprimer.</value>
   <data name="Update_Available" xml:space="preserve">
     <value>Locket {0} est disponible. Vous avez la version {1}.</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>Installer la mise à jour</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>Ignorer cette version</value>
   </data>
@@ -324,21 +321,6 @@ Sélectionnez avec Maj pour tout supprimer.</value>
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>Impossible d’installer Locket {0}</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>Ouvrir dans le Programme d’installation d’application</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>Installation de Locket {0}</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>Locket redémarre une fois la mise à jour installée.</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>Installation de la mise à jour</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>Téléchargement de Locket {0}. Locket redémarre une fois la mise à jour installée.</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>Impossible d’installer la mise à jour</value>
@@ -363,21 +345,6 @@ Sélectionnez avec Maj pour tout supprimer.</value>
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>Vérifiez votre connexion Internet et réessayez.</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>Cette version ne contient pas de package d’installation pour ce PC.</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>Le téléchargement a échoué (HTTP {0}).</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>Impossible d’enregistrer le package téléchargé.</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>La mise à jour n’a pas pu être installée.</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>Locket {0} a été installé. Quittez et rouvrez Locket pour l’utiliser.</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>Locket n’est pas encore prêt.</value>

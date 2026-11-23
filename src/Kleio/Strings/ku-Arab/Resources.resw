@@ -310,9 +310,6 @@
   <data name="Update_Available" xml:space="preserve">
     <value>Locket {0} ئێستا بەردەستە. وەشانی تۆ {1}ە.</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>دامەزراندنی نوێکردنەوە</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>تێپەڕاندنی ئەم وەشانە</value>
   </data>
@@ -324,21 +321,6 @@
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>نەتوانرا Locket {0} دابمەزرێت</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>کردنەوە لە دامەزرێنەری ئەپ</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>Locket {0} دادەمەزرێت</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>دوای دامەزراندنی نوێکردنەوەکە Locket دووبارە دەکرێتەوە.</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>نوێکردنەوە دادەمەزرێت</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>Locket {0} دادەگیرێت. دوای دامەزراندنی نوێکردنەوەکە Locket دووبارە دەکرێتەوە.</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>نەتوانرا نوێکردنەوەکە دابمەزرێت</value>
@@ -363,21 +345,6 @@
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>پەیوەندیی ئینتەرنێتەکەت بپشکنە و دووبارە هەوڵ بدەرەوە.</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>ئەم وەشانە پاکێجی دامەزراندنی بۆ ئەم کۆمپیوتەرە نییە.</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>داگرتن سەرکەوتوو نەبوو (HTTP {0}).</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>نەتوانرا پاکێجە داگیراوەکە پاشەکەوت بکرێت.</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>نوێکردنەوەکە دانەمەزرا.</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>Locket {0} دامەزرا. بۆ بەکارهێنانی، Locket دابخە و دووبارە بیکەرەوە.</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>Locket هێشتا ئامادە نییە.</value>

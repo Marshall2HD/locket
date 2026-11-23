@@ -106,7 +106,7 @@ namespace winrt::Kleio::implementation
         auto const separator = ::Kleio::Strings::Get(L"ListSeparator");
         if (!m_application.empty())
         {
-            if (auto const& name = ::Kleio::PopupImages::AppName(m_application); !name.empty())
+            if (auto const name = ::Kleio::PopupImages::AppName(m_application); !name.empty())
             {
                 label += separator + name;
             }
@@ -132,7 +132,7 @@ namespace winrt::Kleio::implementation
         auto const separator = ::Kleio::Strings::Get(L"ListSeparator");
         if (!m_application.empty())
         {
-            if (auto const& name = ::Kleio::PopupImages::AppName(m_application); !name.empty())
+            if (auto const name = ::Kleio::PopupImages::AppName(m_application); !name.empty())
             {
                 text += separator + name;
             }
@@ -209,9 +209,9 @@ namespace winrt::Kleio::implementation
         const int decodeHeight = std::max(1, static_cast<int>(std::lround(size.Height * (scale > 0 ? scale : 1.0))));
         if (!m_thumbnail || m_thumbnailDecodeHeight != decodeHeight)
         {
-            if (auto png = m_item->Image())
+            if (auto png = m_item->ImageShared())
             {
-                m_thumbnail = ::Kleio::PopupImages::FromPng(*png, decodeHeight);
+                m_thumbnail = ::Kleio::PopupImages::FromPng(std::move(png), {}, decodeHeight);
                 m_thumbnailDecodeHeight = decodeHeight;
             }
         }

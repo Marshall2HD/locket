@@ -3,12 +3,18 @@
 #include "Core/Event.h"
 #include "Core/KeyShortcut.h"
 
+#include <winrt/Microsoft.UI.Dispatching.h>
+#include <wil/resource.h>
+
+#include <atomic>
+#include <mutex>
+#include <thread>
 #include <vector>
 #include <windows.h>
 
 namespace Kleio
 {
-    // Low-level keyboard hook (WH_KEYBOARD_LL), installed on the UI thread, used for two things
+    // Low-level keyboard hook (WH_KEYBOARD_LL), installed on a dedicated message-loop thread, used for two things
     // RegisterHotKey cannot do:
     //  * Win-key shortcuts that Windows keeps for itself (Win+V, Win+Shift+C, ...): each shortcut
     //    set with SetShortcuts is swallowed (and the Start menu suppressed on Win key release by
@@ -29,18 +35,29 @@ namespace Kleio
         void SetShortcuts(std::vector<KeyShortcut> shortcuts);
         void SetBlockedShortcuts(std::vector<KeyShortcut> shortcuts);
         void EnablePasteDetection(bool enable);
+        // Re-check/reinstall the dedicated hook after focus transitions.
+        void Refresh();
 
         Event<> ShortcutPressed;
         Event<> PasteDetected;
 
     private:
         KeyboardHook() = default;
+        ~KeyboardHook();
         void UpdateHook();
+        void HookThread();
+        void ResetHookState() noexcept;
         static LRESULT CALLBACK HookProc(int code, WPARAM wParam, LPARAM lParam);
 
         HHOOK m_hook = nullptr;
+        mutable std::mutex m_configMutex;
         std::vector<KeyShortcut> m_shortcuts;
         std::vector<KeyShortcut> m_blocked;
         bool m_detectPaste = false;
+        winrt::Microsoft::UI::Dispatching::DispatcherQueue m_dispatcher{ nullptr };
+        wil::unique_event m_ready{ wil::EventOptions::ManualReset };
+        std::atomic_bool m_stop{ false };
+        std::atomic<DWORD> m_threadId{ 0 };
+        std::thread m_thread;
     };
 }

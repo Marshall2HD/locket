@@ -310,9 +310,6 @@ Shift を押しながら選択すると全てクリアします。</value>
   <data name="Update_Available" xml:space="preserve">
     <value>Locket {0} が利用可能です。現在のバージョンは {1} です。</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>アップデートをインストール</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>このバージョンをスキップ</value>
   </data>
@@ -324,21 +321,6 @@ Shift を押しながら選択すると全てクリアします。</value>
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>Locket {0} をインストールできませんでした</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>アプリ インストーラーで開く</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>Locket {0} をインストールしています</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>アップデートのインストール後に Locket が再起動します。</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>アップデートをインストールしています</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>Locket {0} をダウンロードしています。アップデートのインストール後に Locket が再起動します。</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>アップデートをインストールできませんでした</value>
@@ -363,21 +345,6 @@ Shift を押しながら選択すると全てクリアします。</value>
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>インターネット接続を確認して、もう一度お試しください。</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>このリリースには、この PC 用のインストール パッケージがありません。</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>ダウンロードに失敗しました (HTTP {0})。</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>ダウンロードしたパッケージを保存できませんでした。</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>アップデートをインストールできませんでした。</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>Locket {0} をインストールしました。使用するには Locket を終了して再度開いてください。</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>Locket の準備ができていません。</value>
@@ -614,7 +581,7 @@ Shift を押しながら選択すると全てクリアします。</value>
     <value>Locket を開く</value>
   </data>
   <data name="General_OpenDescription.Text" xml:space="preserve">
-    <value>アプリケーションを開くグローバルショートカットキー。修飾キーを押しながらメインキーを繰り返し押すと、リストの次の項目が選択されます。このモードでは、修飾キーを離すと選択が確定し、ポップアップが閉じます。デフォルト：Win+Shift+C.</value>
+    <value>アプリケーションを開くグローバルショートカットキー。修飾キーを押しながらメインキーを繰り返し押すと、リストの次の項目が選択されます。このモードでは、修飾キーを離すと選択が確定し、ポップアップが閉じます。デフォルト：Win+Shift+C。</value>
   </data>
   <data name="General_PopupRecorder.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Locket を開くショートカット</value>

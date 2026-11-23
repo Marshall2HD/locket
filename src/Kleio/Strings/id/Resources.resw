@@ -310,9 +310,6 @@ Klik item dengan Shift untuk bersihkan.</value>
   <data name="Update_Available" xml:space="preserve">
     <value>Locket {0} kini tersedia. Anda memiliki {1}.</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>Instal pembaruan</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>Lewati versi ini</value>
   </data>
@@ -324,21 +321,6 @@ Klik item dengan Shift untuk bersihkan.</value>
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>Tidak dapat menginstal Locket {0}</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>Buka di Penginstal Aplikasi</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>Menginstal Locket {0}</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>Locket akan dimulai ulang setelah pembaruan terinstal.</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>Menginstal pembaruan</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>Mengunduh Locket {0}. Locket akan dimulai ulang setelah pembaruan terinstal.</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>Tidak dapat menginstal pembaruan</value>
@@ -363,21 +345,6 @@ Klik item dengan Shift untuk bersihkan.</value>
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>Periksa koneksi internet Anda, lalu coba lagi.</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>Rilis ini tidak memiliki paket penginstal untuk PC ini.</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>Unduhan gagal (HTTP {0}).</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>Tidak dapat menyimpan paket yang diunduh.</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>Pembaruan tidak dapat diinstal.</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>Locket {0} telah diinstal. Keluar lalu buka kembali Locket untuk menggunakannya.</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>Locket belum siap.</value>

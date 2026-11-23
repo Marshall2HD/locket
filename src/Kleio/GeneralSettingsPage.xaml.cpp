@@ -340,31 +340,55 @@ namespace winrt::Kleio::implementation
 
     void GeneralSettingsPage::OnShortcutChanged(winrt::Kleio::ShortcutRecorder const& sender, winrt::Windows::Foundation::IInspectable const&)
     {
-        try
+        if (m_loading)
         {
-            auto const text = sender.Shortcut();
-            auto const shortcut = ::Kleio::KeyShortcut::Parse(std::wstring_view{ text }).value_or(::Kleio::KeyShortcut{});
-            auto& settings = ::Kleio::Settings::Instance();
-            if (sender == PopupRecorder())
+            return;
+        }
+        auto& settings = ::Kleio::Settings::Instance();
+        const auto edited = ::Kleio::KeyShortcut::Parse(std::wstring_view{ sender.Shortcut() }).value_or(::Kleio::KeyShortcut{});
+        const auto current = sender == PopupRecorder() ? settings.PopupShortcut() :
+            sender == PinRecorder() ? settings.PinShortcut() :
+            sender == DeleteRecorder() ? settings.DeleteShortcut() : settings.TogglePreviewShortcut();
+        const std::array<::Kleio::KeyShortcut, 4> other = {
+            settings.PopupShortcut(), settings.PinShortcut(), settings.DeleteShortcut(), settings.TogglePreviewShortcut() };
+        bool duplicate = false;
+        if (!edited.IsEmpty())
+        {
+            for (auto const& shortcut : other)
             {
-                settings.PopupShortcut(shortcut);
-                ApplyHotKeysAndReport();
-            }
-            else if (sender == PinRecorder())
-            {
-                settings.PinShortcut(shortcut);
-            }
-            else if (sender == DeleteRecorder())
-            {
-                settings.DeleteShortcut(shortcut);
-            }
-            else if (sender == PreviewRecorder())
-            {
-                settings.TogglePreviewShortcut(shortcut);
+                if (!shortcut.IsEmpty() && shortcut == edited && shortcut != current)
+                {
+                    duplicate = true;
+                    break;
+                }
             }
         }
-        catch (...)
+        if (duplicate)
         {
+            m_loading = true;
+            sender.Shortcut(winrt::hstring{ current.ToString() });
+            m_loading = false;
+            HotKeyInfoBar().Title(winrt::hstring{ ::Kleio::Strings::Get(L"General_HotKeyInfoBar.Title") });
+            HotKeyInfoBar().Message(winrt::hstring{ ::Kleio::Strings::Get(L"General_HotKeyInfoBar.Message") });
+            HotKeyInfoBar().IsOpen(true);
+            return;
+        }
+        if (sender == PopupRecorder())
+        {
+            settings.PopupShortcut(edited);
+            ApplyHotKeysAndReport();
+        }
+        else if (sender == PinRecorder())
+        {
+            settings.PinShortcut(edited);
+        }
+        else if (sender == DeleteRecorder())
+        {
+            settings.DeleteShortcut(edited);
+        }
+        else if (sender == PreviewRecorder())
+        {
+            settings.TogglePreviewShortcut(edited);
         }
     }
 

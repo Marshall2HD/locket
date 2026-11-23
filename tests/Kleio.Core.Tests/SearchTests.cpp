@@ -73,20 +73,20 @@ TEST(Search_Fuzzy_MaccyVectors)
     const auto items = MaccyItems();
     auto search = [&](std::wstring_view query) { return Search{}.Run(query, items, SearchMode::Fuzzy); };
     CheckResults(search(L"z"), items, {
-        { 1, 0.08, { R(8, 8), R(10, 10) } },
-        { 2, 0.08, { R(8, 10) } },
-        { 0, 0.1, { R(10, 10) } },
+        { 0, 0.0, { R(10, 10) } },
+        { 1, 0.0, { R(8, 8), R(10, 10) } },
+        { 2, 0.0, { R(8, 10) } },
     });
     CheckResults(search(L"foo"), items, {
         { 0, 0.0, { R(0, 2) } },
         { 1, 0.0, { R(0, 2) } },
     });
     CheckResults(search(L"za"), items, {
-        { 1, 0.08, { R(5, 5), R(8, 9) } },
+        { 1, 0.0, { R(8, 9) } },
         { 0, 0.54, { R(5, 5), R(9, 10) } },
         { 2, 0.58, { R(8, 10) } },
     });
-    CheckResults(search(L"yyy"), items, { { 2, 0.04, { R(4, 6) } } });
+    CheckResults(search(L"yyy"), items, { { 2, 0.0, { R(4, 6) } } });
     CheckResults(search(L"fbb"), items, {
         { 0, 0.6666666666666666, { R(0, 0), R(4, 4), R(8, 8) } },
         { 1, 0.6666666666666666, { R(0, 0), R(4, 4) } },
@@ -115,10 +115,22 @@ TEST(Search_Fuzzy_LongPatterns)
         CHECK(typo[0].score.has_value() && *typo[0].score < 0.7);
     }
 
-    // > 64 characters: only a full-string match can succeed (Swift's smart shifts produce a 0 mask).
+    // > 64 characters retain exact substring matches even when embedded in a longer title.
     const std::wstring longText(70, L'k');
-    const std::vector<HistoryItemPtr> longItems{ MakeTextItem(longText), MakeTextItem(longText + L"x") };
-    CheckResults(Search::Fuzzy(longText, longItems), longItems, { { 0, 0.0, { TextRange{ 0, 70 } } } });
+    const std::vector<HistoryItemPtr> longItems{ MakeTextItem(L"prefix " + longText + L" suffix"), MakeTextItem(L"no match") };
+    const auto exact = Search::Fuzzy(longText, longItems);
+    CHECK_EQ(exact.size(), std::size_t{ 1 });
+    if (!exact.empty())
+    {
+        CHECK(exact[0].score.has_value() && *exact[0].score == 0.0);
+        CHECK_EQ(exact[0].ranges, (std::vector<TextRange>{ TextRange{ 7, 77 } }));
+    }
+
+    // Do not retain a dangling high surrogate at the fuzzy-search cutoff.
+    std::wstring surrogateBoundary(5000, L'a');
+    surrogateBoundary += L"\xD83D\xDE00";
+    const std::vector<HistoryItemPtr> boundaryItems{ MakeTextItem(surrogateBoundary) };
+    CHECK(Search::Fuzzy(L"\xD83D\xDE00", boundaryItems).empty());
 }
 
 TEST(Search_Fuzzy_RespectsLimit)

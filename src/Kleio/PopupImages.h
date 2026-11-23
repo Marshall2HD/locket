@@ -3,7 +3,9 @@
 // Image helpers for the popup: PNG bytes -> BitmapImage (decoded asynchronously, once) and a cache
 // of application icons. UI thread only.
 
+#include <atomic>
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -22,7 +24,8 @@ namespace Kleio::PopupImages
     // Creates a BitmapImage and starts decoding `png` into it (SetSourceAsync on an
     // InMemoryRandomAccessStream). `decodePixelHeight` / `decodePixelWidth` > 0 limit the decoded size
     // (physical pixels, aspect ratio kept; set at most one of them).
-    winrt::Microsoft::UI::Xaml::Media::Imaging::BitmapImage FromPng(std::vector<std::uint8_t> const& png,
+    winrt::Microsoft::UI::Xaml::Media::Imaging::BitmapImage FromPng(std::shared_ptr<std::vector<std::uint8_t> const> png,
+                                                                     std::shared_ptr<std::atomic_bool> cancelled = {},
                                                                      int decodePixelHeight = 0,
                                                                      int decodePixelWidth = 0);
 
@@ -31,5 +34,5 @@ namespace Kleio::PopupImages
     winrt::Microsoft::UI::Xaml::Media::Imaging::BitmapImage AppIcon(std::wstring const& exePath, double scale);
 
     // Friendly application name (Platform/AppInfo DisplayName), cached per path.
-    std::wstring const& AppName(std::wstring const& exePath);
+    std::wstring AppName(std::wstring const& exePath);
 }

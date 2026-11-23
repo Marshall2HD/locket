@@ -6,12 +6,14 @@
 
 #include <atomic>
 #include <functional>
+#include <mutex>
 #include <thread>
+#include <vector>
 
 namespace Kleio::ScriptingPipe
 {
-    // Named pipe that carries the scripting verbs (kleio --get/--select/--delete/--clear) from the
-    // short-lived process started by the `kleio.exe` execution alias to the running instance and
+    // Named pipe that carries the scripting verbs (locket --get/--select/--delete/--clear) from the
+    // short-lived process started by the `locket.exe` execution alias to the running instance and
     // returns the result, so the caller gets output and an exit code. AppInstance activation
     // redirection (used for --pause etc.) has no reply channel, hence the pipe.
     //
@@ -44,6 +46,9 @@ namespace Kleio::ScriptingPipe
         wil::unique_event m_stop;
         std::atomic<bool> m_stopping{ false };
         std::thread m_thread;
+        std::mutex m_workersMutex;
+        std::vector<std::thread> m_workers;
+        std::atomic<unsigned int> m_activeWorkers{ 0 };
     };
 
     // Runs in the alias process: sends `command` to the running instance (starting Kleio in the

@@ -310,9 +310,6 @@ Hammasini tozalash uchun Shift bosing.</value>
   <data name="Update_Available" xml:space="preserve">
     <value>Locket {0} endi mavjud. Sizda {1} versiyasi.</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>Yangilanishni o‘rnatish</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>Bu versiyani o‘tkazib yuborish</value>
   </data>
@@ -324,21 +321,6 @@ Hammasini tozalash uchun Shift bosing.</value>
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>Locket {0} o‘rnatilmadi</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>Ilovalar o‘rnatuvchisida ochish</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>Locket {0} o‘rnatilmoqda</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>Yangilanish o‘rnatilgach, Locket qayta ishga tushadi.</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>Yangilanish o‘rnatilmoqda</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>Locket {0} yuklab olinmoqda. Yangilanish o‘rnatilgach, Locket qayta ishga tushadi.</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>Yangilanish o‘rnatilmadi</value>
@@ -363,21 +345,6 @@ Hammasini tozalash uchun Shift bosing.</value>
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>Internet ulanishini tekshiring va qayta urinib ko‘ring.</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>Relizda bu kompyuter uchun o‘rnatish paketi yo‘q.</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>Yuklab olib bo‘lmadi (HTTP {0}).</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>Yuklab olingan paketni saqlab bo‘lmadi.</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>Yangilanishni o‘rnatib bo‘lmadi.</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>Locket {0} o‘rnatildi. Undan foydalanish uchun Locket’dan chiqib, qayta oching.</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>Locket hali tayyor emas.</value>

@@ -310,9 +310,6 @@ Seleziona con Maiusc per eliminarli tutti.</value>
   <data name="Update_Available" xml:space="preserve">
     <value>Locket {0} è ora disponibile. Hai la versione {1}.</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>Installa aggiornamento</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>Salta questa versione</value>
   </data>
@@ -324,21 +321,6 @@ Seleziona con Maiusc per eliminarli tutti.</value>
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>Impossibile installare Locket {0}</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>Apri in Programma di installazione app</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>Installazione di Locket {0}</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>Locket si riavvierà quando l'aggiornamento sarà installato.</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>Installazione dell'aggiornamento</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>Download di Locket {0} in corso. Locket si riavvierà quando l'aggiornamento sarà installato.</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>Impossibile installare l'aggiornamento</value>
@@ -363,21 +345,6 @@ Seleziona con Maiusc per eliminarli tutti.</value>
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>Controlla la connessione a Internet e riprova.</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>La versione non contiene un pacchetto di installazione per questo PC.</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>Il download non è riuscito (HTTP {0}).</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>Impossibile salvare il pacchetto scaricato.</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>Non è stato possibile installare l'aggiornamento.</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>Locket {0} è stato installato. Chiudi e riapri Locket per usarlo.</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>Locket non è ancora pronto.</value>
@@ -614,7 +581,7 @@ Seleziona con Maiusc per eliminarli tutti.</value>
     <value>Apri Locket</value>
   </data>
   <data name="General_OpenDescription.Text" xml:space="preserve">
-    <value>Una pressione ripetuta del tasto principale mentre si tengono premuti i modificatori seleziona la voce successiva dell'elenco. In questa modalità, rilasciando i tasti modificatori si conferma la selezione e si chiude il popup. Default: Win+Maiusc+C.</value>
+    <value>Scorciatoia globale per aprire l'applicazione. Una pressione ripetuta del tasto principale mentre si tengono premuti i modificatori seleziona la voce successiva dell'elenco. In questa modalità, rilasciando i tasti modificatori si conferma la selezione e si chiude il popup. Default: Win+Maiusc+C.</value>
   </data>
   <data name="General_PopupRecorder.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Scorciatoia per aprire Locket</value>

@@ -22,6 +22,8 @@ APP = ROOT / 'src' / 'Kleio'
 STRINGS = APP / 'Strings'
 SOURCE = 'en-US'
 PLACEHOLDER = re.compile(r'\{\d\}')
+SENTENCE_MARK = re.compile(r'[.!?。！？؟\u0964\u17d4]')
+TRAILING_SHORTCUT_ARTIFACT = re.compile(r'Win\+Shift\+C\s+[A-Za-z]\.\s*$')
 # Literals next to string lookups that are not resource keys.
 NOT_KEYS = {'RightToLeft'}
 
@@ -76,6 +78,22 @@ def main():
                 error(f'{language}: {key} is empty')
         if values.get('FlowDirection') not in ('LeftToRight', 'RightToLeft'):
             error(f'{language}: FlowDirection must be LeftToRight or RightToLeft')
+        if language != SOURCE:
+            open_description = values.get('General_OpenDescription.Text')
+            if open_description is not None:
+                en_open_description = source['General_OpenDescription.Text']
+                minimum_length = max(48, int(len(en_open_description) * 0.33))
+                if len(open_description) < minimum_length:
+                    error(f'{language}: General_OpenDescription.Text is too short ({len(open_description)} < {minimum_length})')
+                if len(SENTENCE_MARK.findall(open_description)) < 4:
+                    error(f'{language}: General_OpenDescription.Text must have at least 4 sentence-ending marks')
+                if TRAILING_SHORTCUT_ARTIFACT.search(open_description):
+                    error(f'{language}: General_OpenDescription.Text has a trailing shortcut artifact')
+            for key in source.keys() & values.keys():
+                en_value = source[key]
+                if (len(re.findall(r'[A-Za-z]{2,}', en_value)) >= 6 and not key.startswith('Key_')
+                        and values[key].encode('utf-8') == en_value.encode('utf-8')):
+                    error(f'{language}: {key} is untranslated English prose')
 
     # ---- XAML x:Uid
     uids = {}

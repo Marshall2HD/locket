@@ -310,9 +310,6 @@
   <data name="Update_Available" xml:space="preserve">
     <value>Locket {0} 现已推出。你的版本是 {1}。</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>安装更新</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>跳过此版本</value>
   </data>
@@ -324,21 +321,6 @@
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>无法安装 Locket {0}</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>在应用安装程序中打开</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>正在安装 Locket {0}</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>更新安装后 Locket 会重新启动。</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>正在安装更新</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>正在下载 Locket {0}。更新安装后 Locket 会重新启动。</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>无法安装更新</value>
@@ -363,21 +345,6 @@
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>请检查网络连接，然后重试。</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>此版本没有适用于这台电脑的安装包。</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>下载失败（HTTP {0}）。</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>无法保存下载的安装包。</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>无法安装更新。</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>Locket {0} 已安装。请退出并重新打开 Locket 以使用新版本。</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>Locket 尚未就绪。</value>

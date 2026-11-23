@@ -238,29 +238,6 @@ namespace Kleio
             return IconFromBgra(size, pixels);
         }
 
-        void EnableDarkContextMenus() noexcept
-        {
-            static const bool once = [] {
-                // Undocumented but stable since Windows 10 1903: uxtheme ordinal 135 is
-                // SetPreferredAppMode, 136 FlushMenuThemes. Best effort.
-                const HMODULE uxtheme = LoadLibraryExW(L"uxtheme.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
-                if (uxtheme)
-                {
-                    using SetPreferredAppModeFn = int(WINAPI*)(int);
-                    using FlushMenuThemesFn = void(WINAPI*)();
-                    if (auto setMode = reinterpret_cast<SetPreferredAppModeFn>(GetProcAddress(uxtheme, MAKEINTRESOURCEA(135))))
-                    {
-                        setMode(1); // AllowDark
-                    }
-                    if (auto flush = reinterpret_cast<FlushMenuThemesFn>(GetProcAddress(uxtheme, MAKEINTRESOURCEA(136))))
-                    {
-                        flush();
-                    }
-                }
-                return true;
-            }();
-            (void)once;
-        }
     }
 
     TrayIcon::TrayIcon(MessageWindow& window) : m_window(window)
@@ -270,13 +247,6 @@ namespace Kleio
         if (m_taskbarCreatedMessage != 0 && m_window.Handle())
         {
             ChangeWindowMessageFilterEx(m_window.Handle(), m_taskbarCreatedMessage, MSGFLT_ALLOW, nullptr);
-        }
-        try
-        {
-            EnableDarkContextMenus();
-        }
-        catch (...)
-        {
         }
         m_handlerToken = m_window.AddHandler([this](UINT message, WPARAM wParam, LPARAM lParam) {
             return OnMessage(message, wParam, lParam);

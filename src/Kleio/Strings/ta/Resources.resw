@@ -310,9 +310,6 @@
   <data name="Update_Available" xml:space="preserve">
     <value>Locket {0} இப்போது கிடைக்கிறது. உங்களிடம் {1} உள்ளது.</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>புதுப்பிப்பை நிறுவு</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>இந்தப் பதிப்பைத் தவிர்</value>
   </data>
@@ -324,21 +321,6 @@
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>Locket {0}-ஐ நிறுவ முடியவில்லை</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>பயன்பாட்டு நிறுவியில் திற</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>Locket {0} நிறுவப்படுகிறது</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>புதுப்பிப்பு நிறுவப்பட்டதும் Locket மீண்டும் தொடங்கும்.</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>புதுப்பிப்பு நிறுவப்படுகிறது</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>Locket {0} பதிவிறக்கப்படுகிறது. புதுப்பிப்பு நிறுவப்பட்டதும் Locket மீண்டும் தொடங்கும்.</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>புதுப்பிப்பை நிறுவ முடியவில்லை</value>
@@ -363,21 +345,6 @@
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>இணைய இணைப்பைச் சரிபார்த்து மீண்டும் முயலவும்.</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>இந்த வெளியீட்டில் இந்தக் கணினிக்கான நிறுவல் தொகுப்பு இல்லை.</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>பதிவிறக்கம் தோல்வியடைந்தது (HTTP {0}).</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>பதிவிறக்கிய தொகுப்பைச் சேமிக்க முடியவில்லை.</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>புதுப்பிப்பை நிறுவ முடியவில்லை.</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>Locket {0} நிறுவப்பட்டது. அதைப் பயன்படுத்த Locket-இலிருந்து வெளியேறி மீண்டும் திறக்கவும்.</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>Locket இன்னும் தயாராகவில்லை.</value>
@@ -614,7 +581,7 @@
     <value>Locket-ஐத் திற</value>
   </data>
   <data name="General_OpenDescription.Text" xml:space="preserve">
-    <value>திறந்த பயன்பாட்டிற்கு உலகளாவிய குறுக்குவழி விசை. இயல்புநிலை: Win+Shift+C c.</value>
+    <value>பயன்பாட்டைத் திறக்க உலகளாவிய குறுக்குவழி விசை. மாற்றி விசைகளை அழுத்திப் பிடித்தபடி முதன்மை விசையை மீண்டும் மீண்டும் அழுத்தினால், பட்டியலில் அடுத்த உருப்படி தேர்ந்தெடுக்கப்படும். இந்த நிலையில், மாற்றி விசைகளை விடுவித்தால் தேர்வு உறுதிசெய்யப்பட்டு பாப்அப் மூடப்படும். இயல்புநிலை: Win+Shift+C.</value>
   </data>
   <data name="General_PopupRecorder.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Locket-ஐத் திறக்கும் குறுக்குவிசை</value>
@@ -626,7 +593,7 @@
     <value>இந்தக் குறுக்குவிசையை வேறொரு பயன்பாடு பயன்படுத்துகிறது. வேறொன்றைத் தேர்ந்தெடுக்கவும்.</value>
   </data>
   <data name="General_PinCard.Header" xml:space="preserve">
-    <value>முள்</value>
+    <value>பின் செய்</value>
   </data>
   <data name="General_PinCard.Description" xml:space="preserve">
     <value>வரலாற்று உருப்படியைப் பின் செய்வதற்கான குறுக்குவிசை. இயல்புநிலை: Alt+P.</value>

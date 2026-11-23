@@ -475,12 +475,14 @@ namespace Kleio
 
     bool HistoryItem::Supersedes(HistoryItem const& other) const
     {
+        bool sawNonTransient = false;
         for (auto const& content : other.contents)
         {
             if (IsTransientType(content.type))
             {
                 continue;
             }
+            sawNonTransient = true;
             const bool found = std::any_of(contents.begin(), contents.end(), [&content](HistoryItemContent const& mine) {
                 return mine.type == content.type && mine.value == content.value;
             });
@@ -489,7 +491,7 @@ namespace Kleio
                 return false;
             }
         }
-        return true;
+        return sawNonTransient;
     }
 
     HistoryItemContent const* HistoryItem::Find(std::wstring_view type) const noexcept
@@ -617,6 +619,22 @@ namespace Kleio
             return &content->value;
         }
         return nullptr;
+    }
+
+    std::shared_ptr<std::vector<std::uint8_t> const> HistoryItem::ImageShared() const
+    {
+        auto const* image = Image();
+        if (!image)
+        {
+            return {};
+        }
+        if (m_imageData != image->data() || m_imageSize != image->size())
+        {
+            m_imageShared = std::make_shared<std::vector<std::uint8_t> const>(*image);
+            m_imageData = image->data();
+            m_imageSize = image->size();
+        }
+        return m_imageShared;
     }
 
     std::wstring HistoryItem::PreviewableText() const

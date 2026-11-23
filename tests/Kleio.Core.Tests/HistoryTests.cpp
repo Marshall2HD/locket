@@ -6,6 +6,7 @@
 #include "Core/Storage.h"
 
 #include <algorithm>
+#include <limits>
 
 using namespace Kleio;
 using KleioTests::Bytes;
@@ -692,7 +693,7 @@ TEST(Storage_RoundTripAndSize)
         item.contents.push_back(Text(L"text"));
         item.contents.push_back({ std::wstring{ ContentType::Png }, { 0x89, 0x50, 0x4E, 0x47, 0x00, 0xFF } });
         item.contents.push_back({ std::wstring{ ContentType::FromKleio }, {} });
-        storage.Insert(item);
+        CHECK(storage.Insert(item));
         CHECK(item.id != 0);
 
         auto loaded = storage.LoadAll();
@@ -711,9 +712,9 @@ TEST(Storage_RoundTripAndSize)
 
         item.pin.clear();
         item.title = L"updated";
-        storage.Update(item);
+        CHECK(storage.Update(item));
         item.contents.resize(1);
-        storage.UpdateContents(item);
+        CHECK(storage.UpdateContents(item));
         loaded = storage.LoadAll();
         CHECK(!loaded.empty() && loaded[0]->pin.empty() && loaded[0]->title == L"updated" && loaded[0]->contents.size() == 1);
 
@@ -722,16 +723,16 @@ TEST(Storage_RoundTripAndSize)
         HistoryItem pinned;
         pinned.pin = L"d";
         pinned.contents.push_back(Text(L"keep"));
-        storage.Insert(pinned);
-        storage.RemoveUnpinned();
+        CHECK(storage.Insert(pinned));
+        CHECK(storage.RemoveUnpinned());
         loaded = storage.LoadAll();
         CHECK(loaded.size() == 1 && loaded[0]->id == pinned.id && loaded[0]->contents.size() == 1);
 
-        storage.Remove(pinned.id);
+        CHECK(storage.Remove(pinned.id));
         CHECK(storage.LoadAll().empty());
 
-        storage.Insert(pinned);
-        storage.RemoveAll();
+        CHECK(storage.Insert(pinned));
+        CHECK(storage.RemoveAll());
         CHECK(storage.LoadAll().empty());
     }
 }
@@ -746,9 +747,111 @@ TEST(Storage_ArbitraryFormatNames)
     item.contents.push_back({ L"CF_ENHMETAFILE", std::vector<std::uint8_t>(70000, 0x5A) });
     item.contents.push_back({ L"Format \u00E9\u4E2D", { 0x00, 0x01, 0x00 } });
     item.contents.push_back({ L"x.nspasteboard.ModifiedType", Bytes("12") });
-    storage.Insert(item);
+    CHECK(storage.Insert(item));
     const auto loaded = storage.LoadAll();
     CHECK(loaded.size() == 1 && loaded[0]->contents == item.contents);
+}
+
+
+TEST(Storage_LoadAllClampsOutOfRangeCopyCount)
+{
+    KleioTests::TempDatabase database;
+    Storage storage(database.Path());
+    HistoryItem item;
+    item.contents.push_back(Text(L"copies"));
+    CHECK(storage.Insert(item));
+
+    sqlite3* raw = nullptr;
+    const std::u16string path = database.Path().u16string();
+    CHECK(sqlite3_open16(path.c_str(), &raw) == SQLITE_OK);
+    if (raw)
+    {
+        CHECK(sqlite3_exec(raw, "UPDATE items SET number_of_copies = 0", nullptr, nullptr, nullptr) == SQLITE_OK);
+        sqlite3_close(raw);
+    }
+    auto loaded = storage.LoadAll();
+    CHECK(!loaded.empty() && loaded[0]->numberOfCopies == 1);
+
+    raw = nullptr;
+    CHECK(sqlite3_open16(path.c_str(), &raw) == SQLITE_OK);
+    if (raw)
+    {
+        CHECK(sqlite3_exec(raw, "UPDATE items SET number_of_copies = 2147483648", nullptr, nullptr, nullptr) == SQLITE_OK);
+        sqlite3_close(raw);
+    }
+    loaded = storage.LoadAll();
+    CHECK(!loaded.empty() && loaded[0]->numberOfCopies == (std::numeric_limits<std::int32_t>::max)());
+}
+
+TEST(Storage_MutatorsFailWithoutAutocommitWhenDatabaseIsLocked)
+{
+    KleioTests::TempDatabase database;
+    Storage storage(database.Path());
+    HistoryItem item;
+    item.contents.push_back(Text(L"locked"));
+
+    sqlite3* lock = nullptr;
+    const std::u16string path = database.Path().u16string();
+    CHECK(sqlite3_open16(path.c_str(), &lock) == SQLITE_OK);
+    if (!lock)
+    {
+        return;
+    }
+    CHECK(sqlite3_exec(lock, "BEGIN IMMEDIATE", nullptr, nullptr, nullptr) == SQLITE_OK);
+    CHECK(!storage.Insert(item));
+    CHECK_EQ(item.id, std::int64_t{ 0 });
+    CHECK(storage.LoadAll().empty());
+    CHECK(sqlite3_exec(lock, "ROLLBACK", nullptr, nullptr, nullptr) == SQLITE_OK);
+    sqlite3_close(lock);
+}
+
+TEST(History_DuplicateCopyCountSaturates)
+{
+    Fixture f;
+    auto first = f.history->Add(MakeTextItem(L"copies"));
+    first->numberOfCopies = (std::numeric_limits<std::int32_t>::max)();
+    CHECK(f.storage->Update(*first));
+    auto duplicate = f.history->Add(MakeTextItem(L"copies"));
+    CHECK(duplicate != nullptr);
+    CHECK_EQ(duplicate->numberOfCopies, (std::numeric_limits<std::int32_t>::max)());
+}
+
+TEST(History_DuplicateAddDoesNotDeleteExistingRowWhenReplacementWriteFails)
+{
+    Fixture f;
+    auto existing = f.history->Add(MakeTextItem(L"keep"));
+    sqlite3* lock = nullptr;
+    const std::u16string path = f.database.Path().u16string();
+    CHECK(sqlite3_open16(path.c_str(), &lock) == SQLITE_OK);
+    if (!lock)
+    {
+        return;
+    }
+    CHECK(sqlite3_exec(lock, "BEGIN IMMEDIATE", nullptr, nullptr, nullptr) == SQLITE_OK);
+    auto duplicate = MakeTextItem(L"keep");
+    CHECK(f.history->Add(duplicate) == nullptr);
+    CHECK(f.history->FindById(existing->id) == existing);
+    CHECK_EQ(f.storage->LoadAll().size(), std::size_t{ 1 });
+    CHECK(sqlite3_exec(lock, "ROLLBACK", nullptr, nullptr, nullptr) == SQLITE_OK);
+    sqlite3_close(lock);
+}
+
+TEST(History_ShortcutChangeReassignsNowReservedPin)
+{
+    Fixture f;
+    auto pin = f.history->Add(MakeTextItem(L"pin"));
+    auto remove = f.history->Add(MakeTextItem(L"delete"));
+    auto preview = f.history->Add(MakeTextItem(L"preview"));
+    f.history->UpdatePin(pin, L"b");
+    f.history->UpdatePin(remove, L"d");
+    f.history->UpdatePin(preview, L"e");
+    Settings::Instance().PinShortcut(KeyShortcut{ Modifiers::Alt, 'B' });
+    Settings::Instance().DeleteShortcut(KeyShortcut{ Modifiers::Alt, 'D' });
+    Settings::Instance().TogglePreviewShortcut(KeyShortcut{ Modifiers::Alt, 'E' });
+    for (auto const& item : { pin, remove, preview })
+    {
+        CHECK(item->pin != L"b" && item->pin != L"d" && item->pin != L"e");
+    }
 }
 
 TEST(Storage_RemovingUnpersistableContents)
@@ -759,16 +862,20 @@ TEST(Storage_RemovingUnpersistableContents)
     item.contents.push_back(Text(L"live"));
     item.contents.push_back({ L"Ole Private Data", Bytes("ole") });
     item.contents.push_back({ L"CF_DIB", Bytes("dib") });
+    item.contents.push_back({ L"org.nspasteboard.ConcealedType", Bytes("private") });
     item.contents.push_back({ L"Biff12", Bytes("sheet") });
     item.contents.push_back({ std::wstring{ ContentType::FromKleio }, {} });
     {
         Storage storage(database.Path());
-        storage.Insert(item);
-        CHECK_EQ(storage.RemoveUnpersistableContents(), 2);
-        CHECK_EQ(storage.RemoveUnpersistableContents(), 0);
+        CHECK(storage.Insert(item));
+        int removed = -1;
+        CHECK(storage.RemoveUnpersistableContents(removed));
+        CHECK_EQ(removed, 3);
+        CHECK(storage.RemoveUnpersistableContents(removed));
+        CHECK_EQ(removed, 0);
         const auto loaded = storage.LoadAll();
         CHECK(loaded.size() == 1 && loaded[0]->contents.size() == 3);
-        storage.Insert(item);
+        CHECK(storage.Insert(item));
     }
     Storage reopened(database.Path());
     for (auto const& stored : reopened.LoadAll())

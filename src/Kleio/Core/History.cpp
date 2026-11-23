@@ -3,6 +3,7 @@
 #include "Core/Sorter.h"
 
 #include <algorithm>
+#include <limits>
 #include <random>
 
 namespace Kleio
@@ -17,11 +18,6 @@ namespace Kleio
         constexpr std::wstring_view kBasePins[] = {
             L"b", L"d", L"e", L"f", L"g", L"i", L"l", L"m", L"o", L"r", L"s", L"t",
         };
-
-        bool IsBasePin(std::wstring const& pin)
-        {
-            return std::find(std::begin(kBasePins), std::end(kBasePins), pin) != std::end(kBasePins);
-        }
 
         bool Erase(std::vector<HistoryItemPtr>& items, HistoryItemPtr const& item)
         {
@@ -57,6 +53,14 @@ namespace Kleio
             static std::mt19937 engine{ std::random_device{}() };
             return engine;
         }
+
+        std::int32_t SaturatingCopies(std::int32_t left, std::int32_t right) noexcept
+        {
+            const auto sum = static_cast<std::int64_t>(left) + static_cast<std::int64_t>(right);
+            return sum > std::numeric_limits<std::int32_t>::max()
+                ? std::numeric_limits<std::int32_t>::max()
+                : static_cast<std::int32_t>(std::max<std::int64_t>(1, sum));
+        }
     }
 
     History::History(Storage& storage, Settings& settings) : m_storage(storage), m_settings(settings)
@@ -74,6 +78,13 @@ namespace Kleio
         if (key == Settings::kSortBy || key == Settings::kPinTo)
         {
             Resort();
+            Changed();
+        }
+        else if (key == Settings::kPinShortcut || key == Settings::kDeleteShortcut || key == Settings::kTogglePreviewShortcut)
+        {
+            ReassignReservedPins();
+            ReconcilePinOrder();
+            SortPinned();
             Changed();
         }
         else if (key == Settings::kShowSpecialSymbols)
@@ -117,7 +128,7 @@ namespace Kleio
         // no letter is free the old one is kept (the reserved key wins, the item stays pinned).
         for (auto const& item : m_pinned)
         {
-            if (item->pin.empty() || IsBasePin(item->pin))
+            if (item->pin.empty() || Contains(SupportedPins(), item->pin))
             {
                 continue;
             }
@@ -128,21 +139,26 @@ namespace Kleio
             }
             std::uniform_int_distribution<std::size_t> distribution(0, pins.size() - 1);
             const std::wstring oldPin = item->pin;
-            item->pin = pins[distribution(RandomEngine())];
+            const std::wstring newPin = pins[distribution(RandomEngine())];
+            item->pin = newPin;
+            if (!m_storage.Update(*item))
+            {
+                item->pin = oldPin;
+                continue;
+            }
 
             // PinOrder.replace(oldPin, with: pin)
             auto order = UniquePins(m_settings.PinOrder());
-            std::erase(order, item->pin);
+            std::erase(order, newPin);
             if (auto it = std::find(order.begin(), order.end(), oldPin); it != order.end())
             {
-                *it = item->pin;
+                *it = newPin;
             }
             else
             {
-                order.push_back(item->pin);
+                order.push_back(newPin);
             }
             m_settings.PinOrder(order);
-            m_storage.Update(*item);
         }
     }
 
@@ -153,17 +169,8 @@ namespace Kleio
             return item;
         }
 
-        // Re-adding an item that is already part of the history: treat it as a fresh copy.
-        Erase(m_unpinned, item);
-        const auto alreadyPinned = std::find(m_pinned.begin(), m_pinned.end(), item);
-        std::optional<std::size_t> replacedPinnedIndex;
-        if (alreadyPinned != m_pinned.end())
-        {
-            replacedPinnedIndex = static_cast<std::size_t>(alreadyPinned - m_pinned.begin());
-        }
-
-        // findSimilarItem: the first stored item (pinned first) that supersedes the new one, else
-        // the item this copy says it modified.
+        // Find the successor before changing either list. Its write and deletion of the old row are
+        // one transaction, so an unavailable database cannot destroy an existing duplicate.
         HistoryItemPtr existing;
         for (auto const* list : { &m_pinned, &m_unpinned })
         {
@@ -190,42 +197,42 @@ namespace Kleio
             existing = modified;
         }
 
+        const HistoryItem original = *item;
         const bool wasDuplicate = existing != nullptr;
         if (existing)
         {
-            // transferContents(from: existing, to: item), unless the new contents are a modified
-            // version of the existing ones.
             if (!modified)
             {
                 item->contents = existing->contents;
             }
             item->firstCopiedAt = existing->firstCopiedAt;
-            item->numberOfCopies += existing->numberOfCopies;
+            item->numberOfCopies = SaturatingCopies(item->numberOfCopies, existing->numberOfCopies);
             item->pin = existing->pin;
             item->title = existing->title;
             if (!item->FromKleio())
             {
                 item->application = existing->application;
             }
+        }
+        else if (item->title.empty() && !item->IsImage())
+        {
+            item->title = item->GenerateTitle(m_settings.ShowSpecialSymbols());
+        }
 
+        if (!m_storage.StoreReplacing(*item, existing ? existing->id : 0))
+        {
+            *item = original;
+            return nullptr;
+        }
+
+        // Persistence succeeded: now update the in-memory model and settings, then trim durable
+        // overflow. Removing an item from either list first also handles re-adding the same object.
+        Erase(m_pinned, item);
+        Erase(m_unpinned, item);
+        if (existing)
+        {
+            Erase(m_pinned, existing);
             Erase(m_unpinned, existing);
-            const auto pinnedIt = std::find(m_pinned.begin(), m_pinned.end(), existing);
-            if (pinnedIt != m_pinned.end())
-            {
-                if (replacedPinnedIndex)
-                {
-                    // `item` itself was pinned too; keep a single slot.
-                    m_pinned.erase(pinnedIt);
-                    replacedPinnedIndex = static_cast<std::size_t>(
-                        std::find(m_pinned.begin(), m_pinned.end(), item) - m_pinned.begin());
-                }
-                else
-                {
-                    replacedPinnedIndex = static_cast<std::size_t>(pinnedIt - m_pinned.begin());
-                }
-            }
-            m_storage.Remove(existing->id);
-            // Change counts that pointed at the replaced item now point at its successor.
             for (auto& entry : m_sessionLog)
             {
                 if (entry.second == existing)
@@ -234,52 +241,21 @@ namespace Kleio
                 }
             }
         }
-        else if (item->title.empty() && !item->IsImage())
+        if (item->IsPinned())
         {
-            item->title = item->GenerateTitle(m_settings.ShowSpecialSymbols());
+            m_pinned.push_back(item);
+            ReconcilePinOrder();
+            SortPinned();
         }
-
-        // Remove exceeding items. Done before inserting so that a duplicate keeps the size stable.
-        const auto size = static_cast<std::size_t>(m_settings.HistorySize());
-        TrimTo(item->IsPinned() ? size : size - 1);
-
+        else
+        {
+            InsertUnpinned(item);
+        }
         if (item->changeCount != 0)
         {
             m_sessionLog[item->changeCount] = item;
         }
-
-        if (item->id == 0)
-        {
-            m_storage.Insert(*item);
-        }
-        else
-        {
-            m_storage.Update(*item);
-            m_storage.UpdateContents(*item);
-        }
-
-        if (item->IsPinned())
-        {
-            if (replacedPinnedIndex && *replacedPinnedIndex < m_pinned.size())
-            {
-                m_pinned[*replacedPinnedIndex] = item;
-            }
-            else
-            {
-                m_pinned.push_back(item);
-                ReconcilePinOrder();
-                SortPinned();
-            }
-        }
-        else
-        {
-            if (replacedPinnedIndex && *replacedPinnedIndex < m_pinned.size() && m_pinned[*replacedPinnedIndex] == item)
-            {
-                m_pinned.erase(m_pinned.begin() + static_cast<std::ptrdiff_t>(*replacedPinnedIndex));
-            }
-            InsertUnpinned(item);
-        }
-
+        TrimTo(static_cast<std::size_t>(m_settings.HistorySize()));
         ItemAdded(item, wasDuplicate);
         Changed();
         return item;
@@ -291,7 +267,10 @@ namespace Kleio
         {
             return;
         }
-        m_storage.Remove(item->id);
+        if (!m_storage.Remove(item->id))
+        {
+            return;
+        }
         Erase(m_pinned, item);
         Erase(m_unpinned, item);
         ForgetInSessionLog(item);
@@ -304,7 +283,10 @@ namespace Kleio
 
     void History::Clear()
     {
-        m_storage.RemoveUnpinned();
+        if (!m_storage.RemoveUnpinned())
+        {
+            return;
+        }
         m_unpinned.clear();
         std::erase_if(m_sessionLog, [](auto const& entry) { return !entry.second->IsPinned(); });
         Changed();
@@ -312,7 +294,10 @@ namespace Kleio
 
     void History::ClearAll()
     {
-        m_storage.RemoveAll();
+        if (!m_storage.RemoveAll())
+        {
+            return;
+        }
         m_pinned.clear();
         m_unpinned.clear();
         m_sessionLog.clear();
@@ -331,9 +316,13 @@ namespace Kleio
         {
             const std::wstring pin = item->pin;
             item->pin.clear();
+            if (!m_storage.Update(*item))
+            {
+                item->pin = pin;
+                return;
+            }
             Erase(m_pinned, item);
             RemovePinFromOrderIfUnused(pin);
-            m_storage.Update(*item);
             Erase(m_unpinned, item);
             InsertUnpinned(item);
         }
@@ -345,7 +334,13 @@ namespace Kleio
                 return;   // Kleio cannot represent Maccy's "pinned without shortcut" state
             }
             std::uniform_int_distribution<std::size_t> distribution(0, pins.size() - 1);
-            item->pin = pins[distribution(RandomEngine())];
+            const std::wstring pin = pins[distribution(RandomEngine())];
+            item->pin = pin;
+            if (!m_storage.Update(*item))
+            {
+                item->pin.clear();
+                return;
+            }
             Erase(m_unpinned, item);
             if (std::find(m_pinned.begin(), m_pinned.end(), item) == m_pinned.end())
             {
@@ -358,7 +353,6 @@ namespace Kleio
             }
             m_settings.PinOrder(order);
             SortPinned();
-            m_storage.Update(*item);
         }
         Changed();
     }
@@ -384,6 +378,11 @@ namespace Kleio
 
         const std::wstring oldPin = item->pin;
         item->pin = pin;
+        if (!m_storage.Update(*item))
+        {
+            item->pin = oldPin;
+            return;
+        }
         if (std::find(m_pinned.begin(), m_pinned.end(), item) == m_pinned.end())
         {
             m_pinned.push_back(item);
@@ -405,7 +404,6 @@ namespace Kleio
         m_settings.PinOrder(order);
 
         SortPinned();
-        m_storage.Update(*item);
         Changed();
     }
 
@@ -437,8 +435,13 @@ namespace Kleio
         {
             return;
         }
+        const std::wstring previousTitle = item->title;
         item->title = std::move(title);
-        m_storage.Update(*item);
+        if (!m_storage.Update(*item))
+        {
+            item->title = previousTitle;
+            return;
+        }
         Changed();
     }
 
@@ -448,6 +451,8 @@ namespace Kleio
         {
             return;
         }
+        const auto previousContents = item->contents;
+        const std::wstring previousTitle = item->title;
         // Like Maccy's ItemEditorView.applyChanges: only the edited plain text is kept, so none of
         // the other stored formats can paste the old content.
         std::erase_if(item->contents, [](HistoryItemContent const& content) { return content.type != ContentType::Text; });
@@ -457,14 +462,19 @@ namespace Kleio
         }
         item->contents.front().value = EncodeText(text);
         item->title = item->GenerateTitle(m_settings.ShowSpecialSymbols());
-        m_storage.UpdateContents(*item);
-        m_storage.Update(*item);
+        if (!m_storage.UpdateItemAndContents(*item))
+        {
+            item->contents = previousContents;
+            item->title = previousTitle;
+            return;
+        }
         Changed();
     }
 
     void History::RegenerateTitles()
     {
         const bool showSpecialSymbols = m_settings.ShowSpecialSymbols();
+        bool changed = false;
         for (auto const* list : { &m_pinned, &m_unpinned })
         {
             for (auto const& item : *list)
@@ -474,14 +484,24 @@ namespace Kleio
                     continue;   // OCR titles are kept
                 }
                 auto title = item->GenerateTitle(showSpecialSymbols);
-                if (title != item->title)
+                if (title == item->title)
                 {
-                    item->title = std::move(title);
-                    m_storage.Update(*item);
+                    continue;
                 }
+                const std::wstring previousTitle = item->title;
+                item->title = std::move(title);
+                if (m_storage.Update(*item))
+                {
+                    changed = true;
+                    continue;
+                }
+                item->title = previousTitle;
             }
         }
-        Changed();
+        if (changed)
+        {
+            Changed();
+        }
     }
 
     std::vector<HistoryItemPtr> History::AllItems() const
@@ -590,8 +610,11 @@ namespace Kleio
         while (m_unpinned.size() > maxUnpinned)
         {
             auto item = m_unpinned.back();
+            if (!m_storage.Remove(item->id))
+            {
+                return;
+            }
             m_unpinned.pop_back();
-            m_storage.Remove(item->id);
             ForgetInSessionLog(item);
         }
     }

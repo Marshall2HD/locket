@@ -24,20 +24,28 @@ namespace
     // RedirectActivationToAsync must not be awaited on the STA thread; run it on a worker thread.
     // Bounded wait: if the running instance quits while handling the activation ("kleio --quit"),
     // the operation can stay pending forever and the alias process would never exit.
-    void RedirectTo(AppInstance const& instance, AppActivationArguments const& args)
+    bool RedirectTo(AppInstance const& instance, AppActivationArguments const& args)
     {
+        bool redirected = false;
         std::thread worker([&] {
             winrt::init_apartment(winrt::apartment_type::multi_threaded);
             try
             {
-                instance.RedirectActivationToAsync(args).wait_for(std::chrono::seconds{ 5 });
+                auto operation = instance.RedirectActivationToAsync(args);
+                if (operation.wait_for(std::chrono::seconds{ 5 }) == winrt::Windows::Foundation::AsyncStatus::Completed)
+                {
+                    operation.get(); // surface a redirect failure
+                    redirected = true;
+                }
             }
             catch (...)
             {
+                redirected = false;
             }
             winrt::uninit_apartment();
         });
         worker.join();
+        return redirected;
     }
 
     std::vector<std::wstring> CommandLineArguments()
@@ -87,8 +95,7 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int)
     auto const keyInstance = AppInstance::FindOrRegisterForKey(InstanceKey);
     if (!keyInstance.IsCurrent())
     {
-        RedirectTo(keyInstance, args);
-        return 0;
+        return RedirectTo(keyInstance, args) ? 0 : 1;
     }
 
     winrt::Microsoft::UI::Xaml::Application::Start([](auto&&) {

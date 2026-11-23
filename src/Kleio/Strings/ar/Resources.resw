@@ -310,9 +310,6 @@
   <data name="Update_Available" xml:space="preserve">
     <value>يتوفر الآن Locket {0}. لديك الإصدار {1}.</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>تثبيت التحديث</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>تخطي هذا الإصدار</value>
   </data>
@@ -324,21 +321,6 @@
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>تعذّر تثبيت Locket {0}</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>فتح في مثبّت التطبيقات</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>جارٍ تثبيت Locket {0}</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>سيُعاد تشغيل Locket عند اكتمال تثبيت التحديث.</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>جارٍ تثبيت التحديث</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>جارٍ تنزيل Locket {0}. سيُعاد تشغيل Locket عند اكتمال تثبيت التحديث.</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>تعذّر تثبيت التحديث</value>
@@ -363,21 +345,6 @@
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>تحقق من اتصالك بالإنترنت وحاول مرة أخرى.</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>لا يحتوي الإصدار على حزمة تثبيت لهذا الكمبيوتر.</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>فشل التنزيل (HTTP {0}).</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>تعذّر حفظ الحزمة التي تم تنزيلها.</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>تعذّر تثبيت التحديث.</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>تم تثبيت Locket {0}. أغلق Locket وافتحه من جديد لاستخدامه.</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>Locket ليس جاهزًا بعد.</value>

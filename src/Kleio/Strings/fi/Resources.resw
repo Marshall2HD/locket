@@ -310,9 +310,6 @@ Valitse Vaihto-näppäin painettuna tyhjentääksesi kaikki.</value>
   <data name="Update_Available" xml:space="preserve">
     <value>Locket {0} on nyt saatavilla. Sinulla on {1}.</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>Asenna päivitys</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>Ohita tämä versio</value>
   </data>
@@ -324,21 +321,6 @@ Valitse Vaihto-näppäin painettuna tyhjentääksesi kaikki.</value>
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>Locket {0}:n asentaminen epäonnistui</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>Avaa sovellusten asennusohjelmassa</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>Asennetaan Locket {0}</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>Locket käynnistyy uudelleen, kun päivitys on asennettu.</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>Asennetaan päivitystä</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>Ladataan Locket {0}. Locket käynnistyy uudelleen, kun päivitys on asennettu.</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>Päivityksen asentaminen epäonnistui</value>
@@ -363,21 +345,6 @@ Valitse Vaihto-näppäin painettuna tyhjentääksesi kaikki.</value>
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>Tarkista internetyhteys ja yritä uudelleen.</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>Julkaisussa ei ole asennuspakettia tälle tietokoneelle.</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>Lataus epäonnistui (HTTP {0}).</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>Ladatun paketin tallentaminen epäonnistui.</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>Päivitystä ei voitu asentaa.</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>Locket {0} on asennettu. Lopeta Locket ja avaa se uudelleen, niin voit käyttää sitä.</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>Locket ei ole vielä valmis.</value>

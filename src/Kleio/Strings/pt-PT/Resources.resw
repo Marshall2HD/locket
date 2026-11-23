@@ -310,9 +310,6 @@ Selecione com Shift para limpar tudo.</value>
   <data name="Update_Available" xml:space="preserve">
     <value>O Locket {0} já está disponível. Tem a versão {1}.</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>Instalar atualização</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>Ignorar esta versão</value>
   </data>
@@ -324,21 +321,6 @@ Selecione com Shift para limpar tudo.</value>
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>Não foi possível instalar o Locket {0}</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>Abrir no Instalador de Aplicações</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>A instalar o Locket {0}</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>O Locket reinicia quando a atualização estiver instalada.</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>A instalar a atualização</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>A transferir o Locket {0}. O Locket reinicia quando a atualização estiver instalada.</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>Não foi possível instalar a atualização</value>
@@ -363,21 +345,6 @@ Selecione com Shift para limpar tudo.</value>
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>Verifique a ligação à Internet e tente novamente.</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>A versão não tem um pacote de instalação para este PC.</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>A transferência falhou (HTTP {0}).</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>Não foi possível guardar o pacote transferido.</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>Não foi possível instalar a atualização.</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>O Locket {0} foi instalado. Saia e volte a abrir o Locket para o utilizar.</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>O Locket ainda não está pronto.</value>

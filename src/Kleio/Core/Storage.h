@@ -17,7 +17,7 @@ namespace Kleio
     //            type TEXT, value BLOB)
     //   contents.type is a clipboard format name (ContentType::* or any persistable format, see
     //   Core/ClipboardFormats.h); value holds its bytes.
-    // Throws std::runtime_error on failures to open; other operations log and return.
+    // Throws std::runtime_error on failures to open; other operations log and return false.
     class Storage
     {
     public:
@@ -29,17 +29,19 @@ namespace Kleio
         Storage& operator=(Storage const&) = delete;
 
         std::vector<HistoryItemPtr> LoadAll();
-        void Insert(HistoryItem& item);          // sets item.id, writes contents
-        void Update(HistoryItem const& item);    // updates item row (not contents)
-        void UpdateContents(HistoryItem const& item); // replaces contents
-        void Remove(std::int64_t id);
-        void RemoveUnpinned();
-        void RemoveAll();
+        bool Insert(HistoryItem& item);          // sets item.id, writes contents; restores id on failure
+        bool Update(HistoryItem const& item);    // updates item row (not contents)
+        bool UpdateContents(HistoryItem const& item); // replaces contents
+        bool UpdateItemAndContents(HistoryItem const& item); // atomically updates row and contents
+        bool StoreReplacing(HistoryItem& replacement, std::int64_t supersededId); // atomically writes then deletes
+        bool Remove(std::int64_t id);
+        bool RemoveUnpinned();
+        bool RemoveAll();
         std::uint64_t SizeInBytes() const;
         // Maccy's Storage.removeUnpersistableContents: deletes contents whose type is not
         // persistable (ClipboardFormats::IsPersistable). Runs when the database is opened.
-        // Returns the number of removed rows.
-        int RemoveUnpersistableContents();       // database file size (for the Storage settings page)
+        // `removed` is initialized to zero and receives the number of removed rows on success.
+        bool RemoveUnpersistableContents(int& removed);
 
     private:
         sqlite3* m_db = nullptr;

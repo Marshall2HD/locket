@@ -310,9 +310,6 @@
   <data name="Update_Available" xml:space="preserve">
     <value>Locket {0} अब उपलब्ध है। आपके पास {1} है।</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>अपडेट इंस्टॉल करें</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>यह संस्करण छोड़ें</value>
   </data>
@@ -324,21 +321,6 @@
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>Locket {0} इंस्टॉल नहीं हो सका</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>ऐप इंस्टॉलर में खोलें</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>Locket {0} इंस्टॉल हो रहा है</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>अपडेट इंस्टॉल होने पर Locket फिर से शुरू होगा।</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>अपडेट इंस्टॉल हो रहा है</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>Locket {0} डाउनलोड हो रहा है। अपडेट इंस्टॉल होने पर Locket फिर से शुरू होगा।</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>अपडेट इंस्टॉल नहीं हो सका</value>
@@ -363,21 +345,6 @@
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>अपना इंटरनेट कनेक्शन जाँचें और फिर से प्रयास करें।</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>इस रिलीज़ में इस PC के लिए इंस्टॉलर पैकेज नहीं है।</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>डाउनलोड विफल रहा (HTTP {0})।</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>डाउनलोड किया गया पैकेज सहेजा नहीं जा सका।</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>अपडेट इंस्टॉल नहीं किया जा सका।</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>Locket {0} इंस्टॉल हो गया है। इसे उपयोग करने के लिए Locket बंद करके फिर से खोलें।</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>Locket अभी तैयार नहीं है।</value>

@@ -95,73 +95,112 @@ namespace Kleio
         return instance;
     }
 
+    KeyboardHook::~KeyboardHook()
+    {
+        m_stop = true;
+        if (m_thread.joinable())
+        {
+            PostThreadMessageW(m_threadId.load(), WM_QUIT, 0, 0);
+            m_thread.join();
+        }
+    }
+
     void KeyboardHook::SetBlockedShortcuts(std::vector<KeyShortcut> shortcuts)
     {
-        if (m_blocked == shortcuts)
         {
-            return;
+            std::scoped_lock lock{ m_configMutex };
+            if (m_blocked == shortcuts) return;
+            m_blocked = std::move(shortcuts);
         }
-        m_blocked = std::move(shortcuts);
         UpdateHook();
     }
 
     void KeyboardHook::SetShortcuts(std::vector<KeyShortcut> shortcuts)
     {
-        if (m_shortcuts == shortcuts)
         {
-            return;
-        }
-        m_shortcuts = std::move(shortcuts);
-        g_swallowingKey = 0;
-        if (m_shortcuts.empty())
-        {
-            g_suppressStart = false;
+            std::scoped_lock lock{ m_configMutex };
+            if (m_shortcuts == shortcuts) return;
+            m_shortcuts = std::move(shortcuts);
         }
         UpdateHook();
     }
 
     void KeyboardHook::EnablePasteDetection(bool enable)
     {
-        if (m_detectPaste == enable)
         {
-            return;
+            std::scoped_lock lock{ m_configMutex };
+            if (m_detectPaste == enable) return;
+            m_detectPaste = enable;
         }
-        m_detectPaste = enable;
-        g_pasteVDown = false;
-        g_pasteInsertDown = false;
         UpdateHook();
+    }
+
+    void KeyboardHook::Refresh()
+    {
+        UpdateHook();
+    }
+
+    void KeyboardHook::ResetHookState() noexcept
+    {
+        g_leftWinDown = g_rightWinDown = false;
+        g_swallowingKey = 0;
+        g_suppressStart = false;
+        g_pasteVDown = g_pasteInsertDown = false;
     }
 
     void KeyboardHook::UpdateHook()
     {
-        const bool needed = !m_shortcuts.empty() || !m_blocked.empty() || m_detectPaste;
-        if (needed && !m_hook)
+        bool needed = false;
         {
-            try
+            std::scoped_lock lock{ m_configMutex };
+            needed = !m_shortcuts.empty() || !m_blocked.empty() || m_detectPaste;
+            m_dispatcher = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
+            Queue() = m_dispatcher;
+        }
+        if (needed && !m_thread.joinable())
+        {
+            m_stop = false;
+            m_ready.ResetEvent();
+            m_thread = std::thread([this] { HookThread(); });
+            ::WaitForSingleObject(m_ready.get(), INFINITE);
+        }
+        if (m_thread.joinable())
+        {
+            PostThreadMessageW(m_threadId.load(), WM_APP + 42, 0, 0);
+        }
+        if (!needed && m_thread.joinable())
+        {
+            m_stop = true;
+            PostThreadMessageW(m_threadId.load(), WM_QUIT, 0, 0);
+            m_thread.join();
+        }
+    }
+
+    void KeyboardHook::HookThread()
+    {
+        winrt::init_apartment(winrt::apartment_type::multi_threaded);
+        m_threadId = GetCurrentThreadId();
+        MSG message{};
+        PeekMessageW(&message, nullptr, WM_USER, WM_USER, PM_NOREMOVE); // create this thread's queue
+        ResetHookState();
+        m_hook = SetWindowsHookExW(WH_KEYBOARD_LL, &KeyboardHook::HookProc, GetModuleHandleW(nullptr), 0);
+        m_ready.SetEvent();
+        while (GetMessageW(&message, nullptr, 0, 0) > 0)
+        {
+            if (message.message == WM_APP + 42)
             {
-                Queue() = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
-            }
-            catch (...)
-            {
-                Queue() = nullptr;
-            }
-            g_leftWinDown = IsDown(VK_LWIN);
-            g_rightWinDown = IsDown(VK_RWIN);
-            m_hook = SetWindowsHookExW(WH_KEYBOARD_LL, &KeyboardHook::HookProc, GetModuleHandleW(nullptr), 0);
-            if (!m_hook)
-            {
-                OutputDebugStringW(L"Kleio: SetWindowsHookExW(WH_KEYBOARD_LL) failed\n");
+                ResetHookState(); // config changed or a health refresh was requested
+                if (!m_hook)
+                {
+                    m_hook = SetWindowsHookExW(WH_KEYBOARD_LL, &KeyboardHook::HookProc, GetModuleHandleW(nullptr), 0);
+                }
             }
         }
-        else if (!needed && m_hook)
-        {
-            UnhookWindowsHookEx(m_hook);
-            m_hook = nullptr;
-            g_swallowingKey = 0;
-            g_suppressStart = false;
-            g_pasteVDown = false;
-            g_pasteInsertDown = false;
-        }
+        if (m_hook) UnhookWindowsHookEx(m_hook);
+        m_hook = nullptr;
+        m_threadId = 0;
+        ResetHookState();
+        winrt::uninit_apartment();
     }
 
     LRESULT CALLBACK KeyboardHook::HookProc(int code, WPARAM wParam, LPARAM lParam)
@@ -172,6 +211,15 @@ namespace Kleio
             {
                 auto const* info = reinterpret_cast<KBDLLHOOKSTRUCT const*>(lParam);
                 auto const& self = Instance();
+                std::vector<KeyShortcut> shortcuts;
+                std::vector<KeyShortcut> blocked;
+                bool detectPaste = false;
+                {
+                    std::scoped_lock lock{ self.m_configMutex };
+                    shortcuts = self.m_shortcuts;
+                    blocked = self.m_blocked;
+                    detectPaste = self.m_detectPaste;
+                }
                 const bool down = wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN;
                 const bool up = wParam == WM_KEYUP || wParam == WM_SYSKEYUP;
                 const bool injected = (info->flags & LLKHF_INJECTED) != 0;
@@ -200,7 +248,7 @@ namespace Kleio
                         }
                         return 1; // auto-repeat or release of a swallowed shortcut key
                     }
-                    if (down && (!self.m_shortcuts.empty() || !self.m_blocked.empty()))
+                    if (down && (!shortcuts.empty() || !blocked.empty()))
                     {
                         const bool win = g_leftWinDown || g_rightWinDown || IsDown(VK_LWIN) || IsDown(VK_RWIN);
                         if (win)
@@ -223,7 +271,7 @@ namespace Kleio
                                     RaiseLater(HookEvent::Shortcut);
                                 }
                             };
-                            for (auto const& shortcut : self.m_shortcuts)
+                            for (auto const& shortcut : shortcuts)
                             {
                                 if (matches(shortcut))
                                 {
@@ -231,7 +279,7 @@ namespace Kleio
                                     return 1;
                                 }
                             }
-                            for (auto const& shortcut : self.m_blocked)
+                            for (auto const& shortcut : blocked)
                             {
                                 if (matches(shortcut))
                                 {
@@ -251,7 +299,7 @@ namespace Kleio
                     }
 
                     // ---- Paste detection (Ctrl+V / Shift+Insert, raised on key up like Maccy) ----
-                    if (self.m_detectPaste && !injected)
+                    if (detectPaste && !injected)
                     {
                         if (vk == VkV)
                         {

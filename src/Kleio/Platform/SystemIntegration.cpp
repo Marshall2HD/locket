@@ -121,8 +121,10 @@ namespace Kleio::SystemIntegration
         catch (...)
         {
         }
-        // Fallback (e.g. no package identity / not on a UI thread).
+#ifndef KLEIO_STORE_BUILD
+        // Unpackaged fallback (e.g. no package identity / not on a UI thread).
         ShellExecuteW(nullptr, L"open", uri, nullptr, nullptr, SW_SHOWNORMAL);
+#endif
     }
 
     winrt::hstring AppVersion()

@@ -310,9 +310,6 @@ Elekti per Shift por forigi ĉion.</value>
   <data name="Update_Available" xml:space="preserve">
     <value>Locket {0} nun disponeblas. Vi havas {1}.</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>Instali la ĝisdatigon</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>Preterlasi ĉi tiun version</value>
   </data>
@@ -324,21 +321,6 @@ Elekti per Shift por forigi ĉion.</value>
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>Ne eblis instali Locket-on {0}</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>Malfermi en App Installer</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>Instalante Locket-on {0}</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>Locket rekomenciĝos post la instalo de la ĝisdatigo.</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>Instalante la ĝisdatigon</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>Elŝutante Locket-on {0}. Locket rekomenciĝos post la instalo de la ĝisdatigo.</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>Ne eblis instali la ĝisdatigon</value>
@@ -363,21 +345,6 @@ Elekti per Shift por forigi ĉion.</value>
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>Kontrolu vian retkonekton kaj reprovu.</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>La eldono ne havas instalpakon por ĉi tiu komputilo.</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>La elŝuto malsukcesis (HTTP {0}).</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>Ne eblis konservi la elŝutitan pakon.</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>Ne eblis instali la ĝisdatigon.</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>Locket {0} estas instalita. Forlasu kaj remalfermu Locket-on por uzi ĝin.</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>Locket ankoraŭ ne pretas.</value>

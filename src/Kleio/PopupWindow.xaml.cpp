@@ -8,6 +8,7 @@
 #include "Core/ItemAction.h"
 #include "HistoryItemRow.xaml.h"
 #include "HistoryItemViewModel.h"
+#include "Platform/KeyboardHook.h"
 #include "PopupImages.h"
 #include "PopupUiState.h"
 #include "Strings.h"
@@ -785,6 +786,7 @@ namespace winrt::Kleio::implementation
             }
 
             PlaceAndShow(target);
+            ::Kleio::KeyboardHook::Instance().Refresh();
             m_shown = true;
             FocusSearch();
             Announce(m_lead);
@@ -810,6 +812,7 @@ namespace winrt::Kleio::implementation
         }
         Guard([&] { SaveLastPosition(); });
         m_shown = false;
+        ::Kleio::KeyboardHook::Instance().Refresh();
         Guard([&] { EndCloakedResize(); });
 
         Guard([&] {
@@ -1136,15 +1139,8 @@ namespace winrt::Kleio::implementation
         {
             return;
         }
-        HWND foreground = GetForegroundWindow();
-        const DWORD foregroundThread = foreground ? GetWindowThreadProcessId(foreground, nullptr) : 0;
-        const DWORD currentThread = GetCurrentThreadId();
-        if (foregroundThread != 0 && foregroundThread != currentThread && AttachThreadInput(currentThread, foregroundThread, TRUE))
-        {
-            BringWindowToTop(m_hwnd);
-            SetForegroundWindow(m_hwnd);
-            AttachThreadInput(currentThread, foregroundThread, FALSE);
-        }
+        // Do not attach input queues across processes. If Windows rejects foreground activation,
+        // leave the current foreground window alone.
     }
 
     double PopupWindow::HeaderHeight() const noexcept
@@ -3696,9 +3692,16 @@ namespace winrt::Kleio::implementation
                 const auto pixels = Impl(m_lead)->ImagePixelSize();
                 if (m_previewImageId != item->id || !m_previewBitmap)
                 {
-                    if (auto png = item->Image())
+                    if (m_previewDecodeCancelled)
                     {
-                        m_previewBitmap = ::Kleio::PopupImages::FromPng(*png, 0, pixels.width > 2048 ? 2048 : 0);
+                        m_previewDecodeCancelled->store(true);
+                    }
+                    m_previewDecodeCancelled = std::make_shared<std::atomic_bool>(false);
+                    ++m_previewDecodeGeneration;
+                    if (auto png = item->ImageShared())
+                    {
+                        m_previewBitmap = ::Kleio::PopupImages::FromPng(std::move(png), m_previewDecodeCancelled, 0,
+                                                                          pixels.width > 2048 ? 2048 : 0);
                         m_previewImageId = item->id;
                     }
                 }
@@ -3716,6 +3719,10 @@ namespace winrt::Kleio::implementation
             }
             else
             {
+                if (m_previewDecodeCancelled)
+                {
+                    m_previewDecodeCancelled->store(true);
+                }
                 PreviewImage().Source(nullptr);
                 PreviewImage().Visibility(xaml::Visibility::Collapsed);
                 PreviewDimensions().Visibility(xaml::Visibility::Collapsed);

@@ -310,9 +310,6 @@
   <data name="Update_Available" xml:space="preserve">
     <value>Locket {0} พร้อมใช้งานแล้ว คุณใช้เวอร์ชัน {1}</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>ติดตั้งการอัปเดต</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>ข้ามเวอร์ชันนี้</value>
   </data>
@@ -324,21 +321,6 @@
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>ไม่สามารถติดตั้ง Locket {0}</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>เปิดในตัวติดตั้งแอป</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>กำลังติดตั้ง Locket {0}</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>Locket จะเริ่มใหม่เมื่อติดตั้งการอัปเดตเสร็จ</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>กำลังติดตั้งการอัปเดต</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>กำลังดาวน์โหลด Locket {0} Locket จะเริ่มใหม่เมื่อติดตั้งการอัปเดตเสร็จ</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>ไม่สามารถติดตั้งการอัปเดต</value>
@@ -363,21 +345,6 @@
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>ตรวจสอบการเชื่อมต่ออินเทอร์เน็ตแล้วลองอีกครั้ง</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>รุ่นนี้ไม่มีแพ็กเกจติดตั้งสำหรับพีซีเครื่องนี้</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>การดาวน์โหลดล้มเหลว (HTTP {0})</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>ไม่สามารถบันทึกแพ็กเกจที่ดาวน์โหลด</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>ไม่สามารถติดตั้งการอัปเดตได้</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>ติดตั้ง Locket {0} แล้ว ออกแล้วเปิด Locket ใหม่เพื่อใช้งาน</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>Locket ยังไม่พร้อม</value>
@@ -614,7 +581,7 @@
     <value>เปิด Locket</value>
   </data>
   <data name="General_OpenDescription.Text" xml:space="preserve">
-    <value>คีย์ลัดระดับโลกเพื่อเปิดแอปพลิเคชัน การกดคีย์หลักซ้ำ ๆ พร้อมกับค้างคีย์โมดิฟายเออร์ไว้ จะเลือกไอเท็มถัดไปในรายการ ในโหมดนี้ การปล่อยคีย์โมดิฟายเออร์จะยืนยันการเลือกและปิดป๊อปอัพ ค่าเริ่มต้น: Win+Shift+C.</value>
+    <value>คีย์ลัดระดับโลกเพื่อเปิดแอปพลิเคชัน. การกดคีย์หลักซ้ำ ๆ พร้อมกับค้างคีย์โมดิฟายเออร์ไว้ จะเลือกไอเท็มถัดไปในรายการ. ในโหมดนี้ การปล่อยคีย์โมดิฟายเออร์จะยืนยันการเลือกและปิดป๊อปอัพ. ค่าเริ่มต้น: Win+Shift+C.</value>
   </data>
   <data name="General_PopupRecorder.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>ปุ่มลัดสำหรับเปิด Locket</value>

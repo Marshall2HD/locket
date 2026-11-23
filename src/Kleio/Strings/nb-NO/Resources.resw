@@ -310,9 +310,6 @@ Velg med Shift for å slette alle.</value>
   <data name="Update_Available" xml:space="preserve">
     <value>Locket {0} er nå tilgjengelig. Du har {1}.</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>Installer oppdatering</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>Hopp over denne versjonen</value>
   </data>
@@ -324,21 +321,6 @@ Velg med Shift for å slette alle.</value>
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>Kunne ikke installere Locket {0}</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>Åpne i App Installer</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>Installerer Locket {0}</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>Locket starter på nytt når oppdateringen er installert.</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>Installerer oppdatering</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>Laster ned Locket {0}. Locket starter på nytt når oppdateringen er installert.</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>Kunne ikke installere oppdateringen</value>
@@ -363,21 +345,6 @@ Velg med Shift for å slette alle.</value>
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>Kontroller Internett-tilkoblingen, og prøv på nytt.</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>Utgivelsen har ingen installasjonspakke for denne PC-en.</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>Nedlastingen mislyktes (HTTP {0}).</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>Kunne ikke lagre den nedlastede pakken.</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>Oppdateringen kunne ikke installeres.</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>Locket {0} er installert. Avslutt og åpne Locket på nytt for å bruke den.</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>Locket er ikke klar ennå.</value>

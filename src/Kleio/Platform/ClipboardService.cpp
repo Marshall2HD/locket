@@ -538,8 +538,8 @@ namespace Kleio
 
     void ClipboardService::CheckForChanges()
     {
-        const std::uint32_t sequence = GetClipboardSequenceNumber();
-        if (sequence == m_lastSequence)
+        const std::uint32_t observedSequence = GetClipboardSequenceNumber();
+        if (observedSequence == m_lastSequence)
         {
             m_notifications = 0;
             return;
@@ -551,18 +551,24 @@ namespace Kleio
             ClipboardLock lock{ m_window.Handle(), 2 };
             if (!lock.IsOpen())
             {
-                // Held by another app: look again shortly instead of losing the copy.
-                if (++m_openRetries <= kMaxOpenRetries)
+                // Do not advance m_lastSequence here: OpenClipboard can fail while a producer is
+                // still rendering data. Keep retrying with a bounded backoff, and start over when
+                // a new clipboard sequence supersedes the blocked one.
+                if (GetClipboardSequenceNumber() != observedSequence)
                 {
-                    ScheduleCheck(kSettleDelayMs);
+                    m_openRetries = 0;
                 }
                 else
                 {
-                    m_openRetries = 0;
-                    m_lastSequence = sequence;
+                    m_openRetries = (std::min)(m_openRetries + 1, kMaxOpenRetries);
                 }
+                const ULONGLONG delay = (std::min)(kBusyRetryMs << (std::min)(m_openRetries, 4), kMaxDelayMs);
+                ScheduleCheck(delay);
                 return;
             }
+            // The clipboard's sequence must be read after OpenClipboard. The pre-open value can
+            // belong to a clipboard that was replaced while we waited for the lock.
+            const std::uint32_t sequence = GetClipboardSequenceNumber();
             m_openRetries = 0;
             m_lastSequence = sequence;
             const int notifications = std::exchange(m_notifications, 0);
@@ -636,17 +642,14 @@ namespace Kleio
         {
             return nullptr;
         }
-        // "CanIncludeInClipboardHistory" = 0 is the Windows convention for "don't record this".
-        if (!fromKleio)
+        // A present policy marker that cannot be read, is short, or contains zero opts out.
+        // Do this before building a HistoryItem so private image copies never reach OCR either.
+        if (!fromKleio && IsAvailable(ContentType::CanIncludeInClipboardHistory))
         {
-            if (auto value = ReadFormat(FormatId(ContentType::CanIncludeInClipboardHistory)); value && value->size() >= sizeof(DWORD))
+            const auto value = ReadFormat(FormatId(ContentType::CanIncludeInClipboardHistory));
+            if (!value || ClipboardFormats::ExcludesFromClipboardHistory(*value))
             {
-                DWORD allowed = 1;
-                std::memcpy(&allowed, value->data(), sizeof(allowed));
-                if (allowed == 0)
-                {
-                    return nullptr;
-                }
+                return nullptr;
             }
         }
 
@@ -826,7 +829,9 @@ namespace Kleio
                 break;
             case Kind::Image:
             case Kind::Raw:
-                if (!format.name.empty() && !has(format.name))
+                // Marker/private formats are policy, not user data. This is a second line of
+                // defence in case a producer uses a marker not represented in AlwaysIgnoredFormats.
+                if (!format.name.empty() && !ClipboardFormats::IsPrivateFormat(format.name) && !has(format.name))
                 {
                     // Formats without data (delay rendering that fails, non-memory handles) are skipped.
                     if (auto bytes = ReadFormat(format.id))

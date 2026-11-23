@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <optional>
@@ -71,10 +72,16 @@ namespace Kleio
         // read, 0 when unknown. History keys its session log by it (Maccy's sessionLog).
         std::uint32_t changeCount = 0;
 
+        // Lazily materialized immutable PNG view used by UI image loading. The source data and
+        // size are retained only to invalidate the cache if callers replace public contents.
+        mutable std::shared_ptr<std::vector<std::uint8_t> const> m_imageShared;
+        mutable std::uint8_t const* m_imageData = nullptr;
+        mutable std::size_t m_imageSize = 0;
+
         bool IsPinned() const noexcept { return !pin.empty(); }
 
         // True when every non-transient content of `other` is also present (same type & bytes) in
-        // this item, i.e. `other` is a duplicate that this item should replace.
+        // this item, provided `other` has at least one non-transient content.
         bool Supersedes(HistoryItem const& other) const;
 
         HistoryItemContent const* Find(std::wstring_view type) const noexcept;
@@ -85,6 +92,7 @@ namespace Kleio
         std::optional<std::string> Rtf() const;            // raw RTF
         std::vector<std::wstring> Files() const;           // file paths
         std::vector<std::uint8_t> const* Image() const;    // PNG bytes or nullptr
+        std::shared_ptr<std::vector<std::uint8_t> const> ImageShared() const; // immutable PNG bytes
         bool IsImage() const noexcept { return Image() != nullptr; }
         bool FromKleio() const noexcept { return Has(ContentType::FromKleio); }
         // Change count carried by the ContentType::Modified marker (Maccy's HistoryItem.modified).

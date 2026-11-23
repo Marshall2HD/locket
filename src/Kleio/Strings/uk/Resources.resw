@@ -310,9 +310,6 @@
   <data name="Update_Available" xml:space="preserve">
     <value>Доступна версія Locket {0}. У вас встановлено {1}.</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>Установити оновлення</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>Пропустити цю версію</value>
   </data>
@@ -324,21 +321,6 @@
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>Не вдалося встановити Locket {0}</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>Відкрити в інсталяторі програм</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>Встановлення Locket {0}</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>Locket перезапуститься після встановлення оновлення.</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>Встановлення оновлення</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>Завантаження Locket {0}. Locket перезапуститься після встановлення оновлення.</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>Не вдалося встановити оновлення</value>
@@ -363,21 +345,6 @@
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>Перевірте підключення до Інтернету та спробуйте ще раз.</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>У випуску немає інсталяційного пакета для цього ПК.</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>Помилка завантаження (HTTP {0}).</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>Не вдалося зберегти завантажений пакет.</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>Не вдалося встановити оновлення.</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>Locket {0} встановлено. Закрийте та знову відкрийте Locket, щоб користуватися новою версією.</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>Locket ще не готовий.</value>

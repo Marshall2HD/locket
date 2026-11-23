@@ -310,9 +310,6 @@ Válassz a Shift-el az összes törléséhez.</value>
   <data name="Update_Available" xml:space="preserve">
     <value>Elérhető a Locket {0}. A te verziód: {1}.</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>Frissítés telepítése</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>Verzió kihagyása</value>
   </data>
@@ -324,21 +321,6 @@ Válassz a Shift-el az összes törléséhez.</value>
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>Nem sikerült telepíteni: Locket {0}</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>Megnyitás az Alkalmazástelepítőben</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>Telepítés: Locket {0}</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>A Locket a frissítés telepítése után újraindul.</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>Frissítés telepítése</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>Letöltés: Locket {0}. A Locket a frissítés telepítése után újraindul.</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>Nem sikerült telepíteni a frissítést</value>
@@ -363,21 +345,6 @@ Válassz a Shift-el az összes törléséhez.</value>
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>Ellenőrizd az internetkapcsolatot, és próbáld újra.</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>A kiadásban nincs telepítőcsomag ehhez a géphez.</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>A letöltés nem sikerült (HTTP {0}).</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>Nem sikerült menteni a letöltött csomagot.</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>A frissítést nem sikerült telepíteni.</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>A Locket {0} telepítve. Lépj ki, majd nyisd meg újra a Kleiót a használatához.</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>A Locket még nem áll készen.</value>
@@ -614,7 +581,7 @@ Válassz a Shift-el az összes törléséhez.</value>
     <value>Locket megnyitása</value>
   </data>
   <data name="General_OpenDescription.Text" xml:space="preserve">
-    <value>Globális gyorsbillentyű az alkalmazás megnyitásához. A fő billentyű ismételt lenyomása a módosítók lenyomva tartása mellett a következő elemet választja ki a listában. Ebben az üzemmódban a módosító billentyűk elengedése megerősíti a kiválasztást és bezárja a felugró ablakot. Egyértelmezett: Win+Shift+C.</value>
+    <value>Globális gyorsbillentyű az alkalmazás megnyitásához. A fő billentyű ismételt lenyomása a módosítók lenyomva tartása mellett a következő elemet választja ki a listában. Ebben az üzemmódban a módosító billentyűk elengedése megerősíti a kiválasztást és bezárja a felugró ablakot. Alapértelmezett: Win+Shift+C.</value>
   </data>
   <data name="General_PopupRecorder.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>A Locket megnyitásának billentyűparancsa</value>

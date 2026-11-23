@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 #include <string>
 #include <string_view>
 
@@ -38,6 +39,12 @@ namespace Kleio::ClipboardFormats
     std::wstring StandardFormatName(unsigned int id);
     // Inverse of StandardFormatName for the predefined formats; 0 for any other name.
     unsigned int StandardFormatId(std::wstring_view name) noexcept;
+
+    // Private clipboard markers used by Windows and nspasteboard-compatible producers.
+    bool IsPrivateFormat(std::wstring_view name) noexcept;
+
+    // Windows' CanIncludeInClipboardHistory policy: malformed or zero values opt out (fail closed).
+    bool ExcludesFromClipboardHistory(std::span<std::uint8_t const> value) noexcept;
 
     // Classifies a format present on the clipboard. `name` is the stored name (see above).
     Kind Classify(unsigned int id, std::wstring_view name) noexcept;

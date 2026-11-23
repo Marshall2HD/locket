@@ -310,9 +310,6 @@ Vyber s Shift pro odebrání všech.</value>
   <data name="Update_Available" xml:space="preserve">
     <value>Locket {0} je nyní k dispozici. Máš verzi {1}.</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>Nainstalovat aktualizaci</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>Přeskočit tuto verzi</value>
   </data>
@@ -324,21 +321,6 @@ Vyber s Shift pro odebrání všech.</value>
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>Locket {0} se nepodařilo nainstalovat</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>Otevřít v Instalační službě aplikací</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>Instaluje se Locket {0}</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>Locket se po instalaci aktualizace restartuje.</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>Instaluje se aktualizace</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>Stahuje se Locket {0}. Locket se po instalaci aktualizace restartuje.</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>Aktualizaci se nepodařilo nainstalovat</value>
@@ -363,21 +345,6 @@ Vyber s Shift pro odebrání všech.</value>
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>Zkontroluj připojení k internetu a zkus to znovu.</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>Vydání neobsahuje instalační balíček pro tento počítač.</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>Stahování selhalo (HTTP {0}).</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>Stažený balíček se nepodařilo uložit.</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>Aktualizaci nebylo možné nainstalovat.</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>Locket {0} bylo nainstalováno. Ukonči a znovu otevři Locket, abys ho mohl(a) používat.</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>Locket ještě není připraveno.</value>

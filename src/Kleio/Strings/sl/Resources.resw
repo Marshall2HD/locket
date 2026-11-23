@@ -310,9 +310,6 @@ Izberite z Shift, da počistite vse.</value>
   <data name="Update_Available" xml:space="preserve">
     <value>Locket {0} je zdaj na voljo. Imate različico {1}.</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>Namesti posodobitev</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>Preskoči to različico</value>
   </data>
@@ -324,21 +321,6 @@ Izberite z Shift, da počistite vse.</value>
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>Programa Locket {0} ni bilo mogoče namestiti</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>Odpri v namestitvenem programu za aplikacije</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>Nameščanje programa Locket {0}</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>Locket se bo znova zagnal, ko bo posodobitev nameščena.</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>Nameščanje posodobitve</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>Prenašanje programa Locket {0}. Locket se bo znova zagnal, ko bo posodobitev nameščena.</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>Posodobitve ni bilo mogoče namestiti</value>
@@ -363,21 +345,6 @@ Izberite z Shift, da počistite vse.</value>
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>Preverite internetno povezavo in poskusite znova.</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>Izdaja nima namestitvenega paketa za ta računalnik.</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>Prenos ni uspel (HTTP {0}).</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>Prenesenega paketa ni bilo mogoče shraniti.</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>Posodobitve ni bilo mogoče namestiti.</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>Locket {0} je nameščen. Zaprite in znova odprite Locket, da ga boste uporabljali.</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>Locket še ni pripravljen.</value>

@@ -169,10 +169,12 @@ namespace Kleio
             // A mask of the matches. We'll use to determine all the ranges of the matches
             std::vector<std::uint8_t> matchMask(static_cast<std::size_t>(textLength), 0);
 
+            bool foundExact = false;
             // Get all exact matches, here for speed up
             auto index = IndexOf(text, pattern.text, bestLocation);
             while (index)
             {
+                foundExact = true;
                 const std::int64_t i = *index;
                 const double score = CalculateScore(pattern.len, 0, i, location, distance);
                 threshold = std::min(threshold, score);
@@ -183,6 +185,11 @@ namespace Kleio
                 {
                     matchMask[static_cast<std::size_t>(i + idx)] = 1;
                 }
+            }
+
+            if (foundExact)
+            {
+                return { 0.0, FindRanges(matchMask) };
             }
 
             // Reset the best location
@@ -247,12 +254,6 @@ namespace Kleio
                         }
                     }
 
-                    // A match is found
-                    if (charMatch != 0)
-                    {
-                        matchMask[static_cast<std::size_t>(currentLocation)] = 1;
-                    }
-
                     const auto uj = static_cast<std::size_t>(j);
                     // First pass: exact match
                     bitArr[uj] = ((bitArr[uj + 1] << 1) | 1) & charMatch;
@@ -273,6 +274,10 @@ namespace Kleio
                             // Indeed it is
                             threshold = score;
                             bestLocation = currentLocation;
+                            if (charMatch != 0 && currentLocation < textLength)
+                            {
+                                matchMask[static_cast<std::size_t>(currentLocation)] = 1;
+                            }
 
                             if (!(currentLocation > location))
                             {
@@ -427,7 +432,13 @@ namespace Kleio
             if (searchString.size() > kFuzzySearchLimit)
             {
                 // shortcut to avoid slow search (Maccy keeps `searchString[...stopIndex]`)
-                searchString = searchString.substr(0, kFuzzySearchLimit + 1);
+                std::size_t length = kFuzzySearchLimit + 1;
+                if (length > 0 && static_cast<std::uint32_t>(searchString[length - 1]) >= 0xD800 &&
+                    static_cast<std::uint32_t>(searchString[length - 1]) <= 0xDBFF)
+                {
+                    --length;
+                }
+                searchString = searchString.substr(0, length);
             }
             if (auto fuzzy = FuseSearch(*pattern, searchString))
             {

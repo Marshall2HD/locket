@@ -310,9 +310,6 @@
   <data name="Update_Available" xml:space="preserve">
     <value>Locket {0} មានហើយ។ អ្នកមាន {1}។</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>ដំឡើងបច្ចុប្បន្នភាព</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>រំលងកំណែនេះ</value>
   </data>
@@ -324,21 +321,6 @@
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>មិនអាចដំឡើង Locket {0} បានទេ</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>បើកក្នុងកម្មវិធីដំឡើងកម្មវិធី</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>កំពុងដំឡើង Locket {0}</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>Locket នឹងចាប់ផ្ដើមឡើងវិញ នៅពេលបច្ចុប្បន្នភាពត្រូវបានដំឡើង។</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>កំពុងដំឡើងបច្ចុប្បន្នភាព</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>កំពុងទាញយក Locket {0}។ Locket នឹងចាប់ផ្ដើមឡើងវិញ នៅពេលបច្ចុប្បន្នភាពត្រូវបានដំឡើង។</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>មិនអាចដំឡើងបច្ចុប្បន្នភាពបានទេ</value>
@@ -363,21 +345,6 @@
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>ពិនិត្យការតភ្ជាប់អ៊ីនធឺណិតរបស់អ្នក ហើយព្យាយាមម្ដងទៀត។</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>ការចេញផ្សាយនេះមិនមានកញ្ចប់ដំឡើងសម្រាប់កុំព្យូទ័រនេះទេ។</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>ការទាញយកបានបរាជ័យ (HTTP {0})។</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>មិនអាចរក្សាទុកកញ្ចប់ដែលបានទាញយកបានទេ។</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>មិនអាចដំឡើងបច្ចុប្បន្នភាពបានទេ។</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>Locket {0} ត្រូវបានដំឡើង។ បិទ Locket ហើយបើកវាឡើងវិញដើម្បីប្រើវា។</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>Locket មិនទាន់រួចរាល់ទេ។</value>

@@ -18,15 +18,13 @@ icon's menu, then enable *Show footer* in *Appearance*.
 
 ### How does Locket update?
 
-The Microsoft Store updates Locket like any other Store app. Builds installed outside the Store
-(CI or GitHub release packages) update themselves instead: with *Check for updates automatically* on
-(*Settings → General*), Locket looks for a new [release](https://github.com/Marshall2HD/locket/releases)
-once a day. When there is one, a
-notification offers to install it or skip that version. *Check now* (also in *About*) checks
-right away. Installing downloads the `.msix` for your PC and updates Locket, which then restarts.
-If that fails, Locket offers to open the package in App Installer or the release page.
+The Microsoft Store updates Store builds automatically. GitHub builds check GitHub once a day when
+*Check for updates automatically* is on (*Settings → General*); *Check now* (in *About*) checks right
+away. When a validated new release is available, Locket opens its GitHub release page in your browser
+so you can download the package for your PC and run `Install.cmd`. You can skip a version from the
+notification.
 
 ### Where is my history stored?
 
-In the app's local data folder (`%LOCALAPPDATA%\Packages\MarshallHD.Locket_*\LocalState\history.sqlite`).
-Uninstalling Locket removes it.
+Store history is `%LOCALAPPDATA%\Packages\MarshallHD.Locket_*\LocalState\history.sqlite` and is
+removed on uninstall. Unpackaged builds use `%LOCALAPPDATA%\Kleio\history.sqlite`.

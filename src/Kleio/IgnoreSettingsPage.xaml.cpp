@@ -67,8 +67,18 @@ namespace winrt::Kleio::implementation
     {
         try
         {
-            static_assert(std::size(::Kleio::AlwaysIgnoredFormats) == 2, "Ignore_AlwaysIgnored names two formats");
-            AlwaysIgnoredText().Text(::Kleio::Strings::Format(L"Ignore_AlwaysIgnored", ::Kleio::AlwaysIgnoredFormats[0], ::Kleio::AlwaysIgnoredFormats[1]));
+            static_assert(std::size(::Kleio::AlwaysIgnoredFormats) >= 2, "Ignore_AlwaysIgnored needs at least two formats");
+            std::wstring leading;
+            for (std::size_t i = 0; i + 1 < std::size(::Kleio::AlwaysIgnoredFormats); ++i)
+            {
+                if (!leading.empty())
+                {
+                    leading += ::Kleio::Strings::Get(L"ListSeparator");
+                }
+                leading += ::Kleio::AlwaysIgnoredFormats[i];
+            }
+            AlwaysIgnoredText().Text(::Kleio::Strings::Format(L"Ignore_AlwaysIgnored", leading,
+                                                               ::Kleio::AlwaysIgnoredFormats[std::size(::Kleio::AlwaysIgnoredFormats) - 1]));
 
             LoadValues();
             if (!m_settingsToken)

@@ -310,9 +310,6 @@ Atlasiet ar Shift, lai notīrītu visus.</value>
   <data name="Update_Available" xml:space="preserve">
     <value>Locket {0} tagad ir pieejama. Jums ir {1}.</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>Instalēt atjauninājumu</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>Izlaist šo versiju</value>
   </data>
@@ -324,21 +321,6 @@ Atlasiet ar Shift, lai notīrītu visus.</value>
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>Neizdevās instalēt Locket {0}</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>Atvērt programmu instalētājā</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>Notiek Locket {0} instalēšana</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>Locket tiks restartēta, kad atjauninājums būs instalēts.</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>Notiek atjauninājuma instalēšana</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>Notiek Locket {0} lejupielāde. Locket tiks restartēta, kad atjauninājums būs instalēts.</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>Neizdevās instalēt atjauninājumu</value>
@@ -363,21 +345,6 @@ Atlasiet ar Shift, lai notīrītu visus.</value>
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>Pārbaudiet interneta savienojumu un mēģiniet vēlreiz.</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>Laidienā nav instalācijas pakotnes šim datoram.</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>Lejupielāde neizdevās (HTTP {0}).</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>Neizdevās saglabāt lejupielādēto pakotni.</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>Atjauninājumu nevarēja instalēt.</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>Locket {0} ir instalēta. Izejiet un atkal atveriet Locket, lai to izmantotu.</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>Locket vēl nav gatava.</value>

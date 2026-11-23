@@ -368,8 +368,8 @@ namespace Kleio
         CopyItem(*item, plan.removeFormatting);
         if (plan.paste)
         {
-            m_paste.RestoreForegroundWindow();
-            m_paste.Paste();
+            const HWND target = m_paste.RestoreForegroundWindow();
+            m_paste.Paste(target);
         }
     }
 
@@ -386,6 +386,12 @@ namespace Kleio
             return;
         }
 
+        ++m_pasteStackGeneration;
+        m_pasteAdvancePending = false;
+        if (m_pasteAdvanceTimer)
+        {
+            m_pasteAdvanceTimer.Stop();
+        }
         m_pasteStack = PasteStack{ std::move(items), modifiers };
         KeyboardHook::Instance().EnablePasteDetection(true);
         PasteStackChanged();
@@ -394,9 +400,9 @@ namespace Kleio
         CopyItem(*m_pasteStack->items.front(), plan.removeFormatting);
         if (plan.paste)
         {
-            m_paste.RestoreForegroundWindow();
-            m_paste.Paste();
-            // Our own (injected) Ctrl+V is invisible to the paste detector; advance explicitly.
+            const HWND target = m_paste.RestoreForegroundWindow();
+            m_paste.Paste(target);
+            // Our own injected Ctrl+V is invisible to the paste detector; advance explicitly.
             OnPasteDetected();
         }
     }
@@ -407,27 +413,47 @@ namespace Kleio
         {
             return;
         }
-        auto dispatcher = winrt::DispatcherQueue::GetForCurrentThread();
-        auto timer = dispatcher.CreateTimer();
-        timer.Interval(PasteStackAdvanceDelay);
-        timer.IsRepeating(false);
-        timer.Tick([this](winrt::DispatcherQueueTimer const& sender, auto&&) {
-            sender.Stop();
-            if (!m_pasteStack || m_pasteStack->items.empty())
+        ++m_pasteStackGeneration;
+        const std::uint64_t generation = m_pasteStackGeneration;
+        m_pasteAdvancePending = true;
+        if (!m_pasteAdvanceTimer)
+        {
+            auto dispatcher = winrt::DispatcherQueue::GetForCurrentThread();
+            if (!dispatcher)
             {
                 return;
             }
-            m_pasteStack->items.erase(m_pasteStack->items.begin());
-            if (m_pasteStack->items.empty())
-            {
-                InterruptPasteStack();
-                return;
-            }
-            auto const plan = PlanFor(m_pasteStack->modifiers);
-            CopyItem(*m_pasteStack->items.front(), plan.removeFormatting);
-            PasteStackChanged();
-        });
-        timer.Start();
+            m_pasteAdvanceTimer = dispatcher.CreateTimer();
+            m_pasteAdvanceTimer.IsRepeating(false);
+            m_pasteAdvanceTimer.Tick([this](winrt::DispatcherQueueTimer const& sender, auto&&) {
+                sender.Stop();
+                if (!m_pasteAdvancePending || !m_pasteStack)
+                {
+                    return;
+                }
+                m_pasteAdvancePending = false;
+                if (!m_pasteStack->items.empty())
+                {
+                    m_pasteStack->items.erase(m_pasteStack->items.begin());
+                }
+                if (m_pasteStack->items.empty())
+                {
+                    InterruptPasteStack();
+                    return;
+                }
+                const auto plan = PlanFor(m_pasteStack->modifiers);
+                if (plan.valid)
+                {
+                    CopyItem(*m_pasteStack->items.front(), plan.removeFormatting);
+                }
+                PasteStackChanged();
+            });
+        }
+        // One owned timer serializes a burst of physical and injected-paste notifications.
+        (void)generation;
+        m_pasteAdvanceTimer.Stop();
+        m_pasteAdvanceTimer.Interval(PasteStackAdvanceDelay);
+        m_pasteAdvanceTimer.Start();
     }
 
     void AppController::InterruptPasteStack()
@@ -435,6 +461,12 @@ namespace Kleio
         if (!m_pasteStack)
         {
             return;
+        }
+        ++m_pasteStackGeneration;
+        m_pasteAdvancePending = false;
+        if (m_pasteAdvanceTimer)
+        {
+            m_pasteAdvanceTimer.Stop();
         }
         m_pasteStack.reset();
         KeyboardHook::Instance().EnablePasteDetection(false);
@@ -718,25 +750,12 @@ namespace Kleio
         std::wstring const action = get(L"action");
         if (action == L"installUpdate")
         {
-            UpdateInfo update{ get(L"version"), get(L"package"), get(L"release") };
-            // Only Kleio's own release assets.
-            if (!update.packageUrl.starts_with(L"https://github.com/Marshall2HD/locket/releases/download/"))
-            {
-                update.packageUrl.clear();
-            }
+            UpdateInfo update{ get(L"version"), get(L"release") };
             InstallUpdate(update);
         }
         else if (action == L"skipUpdate")
         {
             Settings::Instance().SkippedUpdateVersion(get(L"version"));
-        }
-        else if (action == L"openPackage")
-        {
-            auto const package = get(L"package");
-            if (package.ends_with(L".msix") || package.ends_with(L".msixbundle"))
-            {
-                OpenPackageInstaller(package);
-            }
         }
         else if (action == L"showUpdate")
         {
@@ -755,20 +774,16 @@ namespace Kleio
             builder.AddArgument(L"action", L"showUpdate");
             builder.AddText(Strings::Get(L"Update_NotificationTitle"));
             builder.AddText(Strings::Format(L"Update_Available", update.version, SystemIntegration::AppVersion()));
-            if (!update.packageUrl.empty())
-            {
-                builder.AddButton(winrt::AppNotificationButton(Strings::Get(L"Update_Install"))
-                                      .AddArgument(L"action", L"installUpdate")
-                                      .AddArgument(L"version", update.version)
-                                      .AddArgument(L"package", update.packageUrl)
-                                      .AddArgument(L"release", update.releaseUrl));
-            }
+            builder.AddButton(winrt::AppNotificationButton(Strings::Get(L"Update_Download"))
+                                  .AddArgument(L"action", L"installUpdate")
+                                  .AddArgument(L"version", update.version)
+                                  .AddArgument(L"release", update.releaseUrl));
             builder.AddButton(winrt::AppNotificationButton(Strings::Get(L"Update_Skip"))
                                   .AddArgument(L"action", L"skipUpdate")
                                   .AddArgument(L"version", update.version));
             if (!update.releaseUrl.empty())
             {
-                builder.AddButton(winrt::AppNotificationButton(Strings::Get(update.packageUrl.empty() ? L"Update_Download" : L"Update_ReleaseNotes"))
+                builder.AddButton(winrt::AppNotificationButton(Strings::Get(L"Update_ReleaseNotes"))
                                       .SetInvokeUri(winrt::Uri{ update.releaseUrl }));
             }
             auto notification = builder.BuildNotification();
@@ -782,19 +797,13 @@ namespace Kleio
         }
     }
 
-    void AppController::ShowUpdateFailedNotification(std::wstring const& error, std::wstring const& package, UpdateInfo const& update)
+    void AppController::ShowUpdateFailedNotification(std::wstring const& error, UpdateInfo const& update)
     {
         try
         {
             winrt::AppNotificationBuilder builder;
             builder.AddText(Strings::Format(L"Update_InstallFailedTitle", update.version));
             builder.AddText(error);
-            if (!package.empty())
-            {
-                builder.AddButton(winrt::AppNotificationButton(Strings::Get(L"Update_OpenInAppInstaller"))
-                                      .AddArgument(L"action", L"openPackage")
-                                      .AddArgument(L"package", package));
-            }
             builder.AddButton(winrt::AppNotificationButton(Strings::Get(L"Update_Download"))
                                   .SetInvokeUri(winrt::Uri{ update.releaseUrl.empty() ? std::wstring{ ReleasesUrl } : update.releaseUrl }));
             auto notification = builder.BuildNotification();
@@ -810,22 +819,15 @@ namespace Kleio
 
     void AppController::InstallUpdate(UpdateInfo const& update)
     {
-        try
+        if (SystemIntegration::InstalledFromStore())
         {
-            auto notification = winrt::AppNotificationBuilder()
-                .AddText(Strings::Format(L"Update_Installing", update.version))
-                .AddText(Strings::Get(L"Update_RestartsWhenInstalled"))
-                .MuteAudio()
-                .BuildNotification();
-            notification.Tag(L"update");
-            notification.Group(L"updates");
-            winrt::AppNotificationManager::Default().Show(notification);
+            return;
         }
-        catch (...)
-        {
-        }
-        ::Kleio::InstallUpdate(update, [this, update](std::wstring const& error, std::wstring const& package) {
-            ShowUpdateFailedNotification(error, package, update);
+        ::Kleio::InstallUpdate(update, [this, update](bool ok, std::wstring const& error) {
+            if (!ok)
+            {
+                ShowUpdateFailedNotification(error, update);
+            }
         });
     }
 

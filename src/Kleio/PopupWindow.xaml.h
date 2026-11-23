@@ -9,8 +9,10 @@
 
 #include <winrt/Kleio.h>
 
+#include <atomic>
 #include <cstdint>
 #include <functional>
+#include <memory>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -246,6 +248,8 @@ namespace winrt::Kleio::implementation
         std::int64_t m_previewItemId = 0;
         std::int64_t m_previewImageId = 0;
         winrt::Microsoft::UI::Xaml::Media::Imaging::BitmapImage m_previewBitmap{ nullptr };
+        std::shared_ptr<std::atomic_bool> m_previewDecodeCancelled;
+        std::uint64_t m_previewDecodeGeneration = 0;
 
 
         double m_scale = 1.0;

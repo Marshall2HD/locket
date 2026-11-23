@@ -310,9 +310,6 @@
   <data name="Update_Available" xml:space="preserve">
     <value>Locket {0} זמין עכשיו. הגרסה שלך היא {1}.</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>התקנת העדכון</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>דילוג על הגרסה הזאת</value>
   </data>
@@ -324,21 +321,6 @@
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>לא ניתן היה להתקין את Locket {0}</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>פתיחה במתקין היישומים</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>Locket {0} בהתקנה</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>Locket יופעל מחדש לאחר התקנת העדכון.</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>העדכון בהתקנה</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>Locket {0} בהורדה. Locket יופעל מחדש לאחר התקנת העדכון.</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>לא ניתן היה להתקין את העדכון</value>
@@ -363,21 +345,6 @@
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>יש לבדוק את החיבור לאינטרנט ולנסות שוב.</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>לגרסה אין חבילת התקנה למחשב הזה.</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>ההורדה נכשלה (HTTP {0}).</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>לא ניתן היה לשמור את החבילה שהורדה.</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>לא ניתן היה להתקין את העדכון.</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>Locket {0} הותקן. יש לצאת מ-Locket ולפתוח אותו מחדש כדי להשתמש בו.</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>Locket עדיין לא מוכן.</value>

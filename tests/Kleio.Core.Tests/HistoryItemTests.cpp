@@ -172,6 +172,17 @@ TEST(HistoryItem_TextEncodingRoundTrip)
     CHECK(item.Image() == nullptr);
 }
 
+
+TEST(HistoryItem_ImageSharedReturnsImmutablePngBytes)
+{
+    HistoryItem item;
+    item.contents.push_back({ std::wstring{ ContentType::Png }, Bytes("png") });
+    const auto shared = item.ImageShared();
+    CHECK(shared != nullptr);
+    CHECK(shared && *shared == item.contents[0].value);
+    CHECK(item.Image() == &item.contents[0].value);
+}
+
 TEST(HistoryItem_FindAndHas)
 {
     HistoryItem item = TextItem(L"x");
@@ -230,6 +241,16 @@ TEST(HistoryItem_SupersedesWithAllFormats)
     HistoryItem textOnly = TextItem(L"cell");
     CHECK(office.Supersedes(textOnly));
     CHECK(!textOnly.Supersedes(office));
+}
+
+
+TEST(HistoryItem_SupersedesDoesNotMatchTransientOnlyItem)
+{
+    HistoryItem plain = TextItem(L"one");
+    HistoryItem transient;
+    transient.contents.push_back({ std::wstring{ ContentType::FromKleio }, {} });
+    transient.contents.push_back({ std::wstring{ ContentType::Modified }, Bytes("1") });
+    CHECK(!plain.Supersedes(transient));
 }
 
 TEST(HistoryItem_TransientTypes)

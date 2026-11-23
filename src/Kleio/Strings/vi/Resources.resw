@@ -310,9 +310,6 @@ Chọn với Shift để xóa tất cả.</value>
   <data name="Update_Available" xml:space="preserve">
     <value>Locket {0} hiện đã có. Bạn đang dùng {1}.</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>Cài đặt bản cập nhật</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>Bỏ qua phiên bản này</value>
   </data>
@@ -324,21 +321,6 @@ Chọn với Shift để xóa tất cả.</value>
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>Không thể cài đặt Locket {0}</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>Mở trong Trình cài đặt ứng dụng</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>Đang cài đặt Locket {0}</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>Locket sẽ khởi động lại khi bản cập nhật được cài đặt.</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>Đang cài đặt bản cập nhật</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>Đang tải xuống Locket {0}. Locket sẽ khởi động lại khi bản cập nhật được cài đặt.</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>Không thể cài đặt bản cập nhật</value>
@@ -363,21 +345,6 @@ Chọn với Shift để xóa tất cả.</value>
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>Hãy kiểm tra kết nối Internet rồi thử lại.</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>Bản phát hành không có gói cài đặt cho máy tính này.</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>Tải xuống không thành công (HTTP {0}).</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>Không thể lưu gói đã tải xuống.</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>Không thể cài đặt bản cập nhật.</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>Đã cài đặt Locket {0}. Hãy thoát và mở lại Locket để sử dụng.</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>Locket chưa sẵn sàng.</value>
@@ -614,7 +581,7 @@ Chọn với Shift để xóa tất cả.</value>
     <value>Mở Locket</value>
   </data>
   <data name="General_OpenDescription.Text" xml:space="preserve">
-    <value>Phím tắt mở ứng dụng. Nhấn giữ phím chính cùng với các phím sửa đổi sẽ chọn mục tiếp theo trong danh sách. Trong chế độ này, thả các phím sửa đổi sẽ xác nhận lựa chọn và đóng cửa sổ popup. Mặc định: Win+Shift+C.</value>
+    <value>Phím tắt toàn cục để mở ứng dụng. Nhấn lặp lại phím chính trong khi giữ các phím sửa đổi sẽ chọn mục tiếp theo trong danh sách. Trong chế độ này, thả các phím sửa đổi sẽ xác nhận lựa chọn và đóng cửa sổ bật lên. Mặc định: Win+Shift+C.</value>
   </data>
   <data name="General_PopupRecorder.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Phím tắt mở Locket</value>

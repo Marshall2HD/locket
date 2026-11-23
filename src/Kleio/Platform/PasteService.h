@@ -1,6 +1,7 @@
 #pragma once
 
 #include <windows.h>
+#include <winrt/Microsoft.UI.Dispatching.h>
 
 namespace Kleio
 {
@@ -12,14 +13,16 @@ namespace Kleio
         // own windows).
         void RememberForegroundWindow();
         HWND PreviousForegroundWindow() const noexcept { return m_previous; }
-        // Brings the remembered window back to the foreground (best effort, AttachThreadInput trick).
-        void RestoreForegroundWindow();
-        // Releases any held modifier keys, then sends Ctrl+V with SendInput (virtual key 'V' mapped
-        // through the current keyboard layout). Must be called after the popup is hidden; waits briefly
-        // for focus to settle.
-        void Paste();
+        // Brings the remembered window back to the foreground and returns it only if foreground
+        // activation succeeded. No input queues are attached across processes.
+        HWND RestoreForegroundWindow();
+        // Releases held modifiers, then schedules Ctrl+V after focus settles. The send is aborted
+        // if the verified target ceased to be foreground.
+        void Paste(HWND target);
 
     private:
         HWND m_previous = nullptr;
+        HWND m_pasteTarget = nullptr;
+        winrt::Microsoft::UI::Dispatching::DispatcherQueueTimer m_pasteTimer{ nullptr };
     };
 }

@@ -45,9 +45,25 @@ namespace winrt::Kleio::implementation
 
 namespace
 {
-    bool Contains(std::wstring const& haystack, std::wstring_view needle)
+    bool HasArgument(std::wstring const& commandLine, std::wstring_view expected)
     {
-        return haystack.find(needle) != std::wstring::npos;
+        int count = 0;
+        LPWSTR* argv = ::CommandLineToArgvW(commandLine.c_str(), &count);
+        if (!argv)
+        {
+            return false;
+        }
+        bool found = false;
+        for (int i = 0; i < count; ++i)
+        {
+            if (expected == argv[i])
+            {
+                found = true;
+                break;
+            }
+        }
+        ::LocalFree(argv);
+        return found;
     }
 }
 
@@ -72,11 +88,14 @@ namespace winrt::Kleio::implementation
     {
         m_dispatcher = Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
 
-        ::Kleio::AppController::Current().Start();
-
         auto instance = AppInstance::GetCurrent();
+        // Subscribe before startup can create work that triggers a redirected activation. Snapshot
+        // the initial activation now because redirected argument objects are remote proxies.
         instance.Activated({ this, &App::OnActivated });
-        HandleActivation(Snapshot(instance.GetActivatedEventArgs()), true);
+        const Activation initialActivation = Snapshot(instance.GetActivatedEventArgs());
+
+        ::Kleio::AppController::Current().Start();
+        HandleActivation(initialActivation, true);
     }
 
     void App::OnActivated(IInspectable const&, AppActivationArguments const& args)
@@ -116,29 +135,29 @@ namespace winrt::Kleio::implementation
             return;
         }
 
-        if (Contains(arguments, L"--quit"))
+        if (HasArgument(arguments, L"--quit"))
         {
             controller.Quit();
             return;
         }
-        if (Contains(arguments, L"--ignore-next"))
+        if (HasArgument(arguments, L"--ignore-next"))
         {
             controller.IgnoreNextCopy();
             return;
         }
-        if (Contains(arguments, L"--pause"))
+        if (HasArgument(arguments, L"--pause"))
         {
             settings.IgnoreOnlyNextEvent(false);
             settings.IgnoreEvents(true);
             return;
         }
-        if (Contains(arguments, L"--resume"))
+        if (HasArgument(arguments, L"--resume"))
         {
             settings.IgnoreOnlyNextEvent(false);
             settings.IgnoreEvents(false);
             return;
         }
-        if (Contains(arguments, L"--settings"))
+        if (HasArgument(arguments, L"--settings"))
         {
             controller.OpenSettings();
             return;
@@ -146,8 +165,8 @@ namespace winrt::Kleio::implementation
 
         // Started with Windows, by a scripting command (kleio --get ... starts Kleio with
         // --background) or after an update (--updated): stay in the notification area.
-        if (activation.kind == ExtendedActivationKind::StartupTask || Contains(arguments, L"--background") ||
-            Contains(arguments, L"--updated"))
+        if (activation.kind == ExtendedActivationKind::StartupTask || HasArgument(arguments, L"--background") ||
+            HasArgument(arguments, L"--updated"))
         {
             return;
         }

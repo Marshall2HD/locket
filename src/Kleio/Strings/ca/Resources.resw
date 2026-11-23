@@ -310,9 +310,6 @@ Selecciona amb Maj per netejar tots els elements.</value>
   <data name="Update_Available" xml:space="preserve">
     <value>El Locket {0} ja està disponible. Teniu la versió {1}.</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>Instal·la l'actualització</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>Omet aquesta versió</value>
   </data>
@@ -324,21 +321,6 @@ Selecciona amb Maj per netejar tots els elements.</value>
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>No s'ha pogut instal·lar el Locket {0}</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>Obre a l'Instal·lador d'aplicacions</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>S'està instal·lant el Locket {0}</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>El Locket es reiniciarà quan s'hagi instal·lat l'actualització.</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>S'està instal·lant l'actualització</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>S'està baixant el Locket {0}. El Locket es reiniciarà quan s'hagi instal·lat l'actualització.</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>No s'ha pogut instal·lar l'actualització</value>
@@ -363,21 +345,6 @@ Selecciona amb Maj per netejar tots els elements.</value>
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>Comproveu la connexió a Internet i torneu-ho a provar.</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>La versió no té cap paquet d'instal·lació per a aquest ordinador.</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>La baixada ha fallat (HTTP {0}).</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>No s'ha pogut desar el paquet baixat.</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>No s'ha pogut instal·lar l'actualització.</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>S'ha instal·lat el Locket {0}. Sortiu del Locket i torneu-lo a obrir per fer-lo servir.</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>El Locket encara no està preparat.</value>

@@ -310,9 +310,6 @@ Selecteer met Shift om alles te wissen.</value>
   <data name="Update_Available" xml:space="preserve">
     <value>Locket {0} is nu beschikbaar. Je hebt {1}.</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>Update installeren</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>Deze versie overslaan</value>
   </data>
@@ -324,21 +321,6 @@ Selecteer met Shift om alles te wissen.</value>
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>Kan Locket {0} niet installeren</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>Openen in App Installer</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>Locket {0} installeren</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>Locket start opnieuw wanneer de update is geïnstalleerd.</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>Update installeren</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>Locket {0} downloaden. Locket start opnieuw wanneer de update is geïnstalleerd.</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>Kan de update niet installeren</value>
@@ -363,21 +345,6 @@ Selecteer met Shift om alles te wissen.</value>
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>Controleer je internetverbinding en probeer het opnieuw.</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>De release bevat geen installatiepakket voor deze pc.</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>Het downloaden is mislukt (HTTP {0}).</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>Kan het gedownloade pakket niet opslaan.</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>De update kon niet worden geïnstalleerd.</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>Locket {0} is geïnstalleerd. Sluit Locket af en open het opnieuw om de nieuwe versie te gebruiken.</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>Locket is nog niet klaar.</value>

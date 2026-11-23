@@ -310,9 +310,6 @@ Selectează cu Shift pentru a șterge tot.</value>
   <data name="Update_Available" xml:space="preserve">
     <value>Locket {0} este acum disponibil. Ai versiunea {1}.</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>Instalează actualizarea</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>Omite această versiune</value>
   </data>
@@ -324,21 +321,6 @@ Selectează cu Shift pentru a șterge tot.</value>
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>Locket {0} nu a putut fi instalat</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>Deschide în Programul de instalare a aplicațiilor</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>Se instalează Locket {0}</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>Locket repornește după instalarea actualizării.</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>Se instalează actualizarea</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>Se descarcă Locket {0}. Locket repornește după instalarea actualizării.</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>Actualizarea nu a putut fi instalată</value>
@@ -363,21 +345,6 @@ Selectează cu Shift pentru a șterge tot.</value>
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>Verifică conexiunea la internet și încearcă din nou.</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>Versiunea nu are un pachet de instalare pentru acest PC.</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>Descărcarea a eșuat (HTTP {0}).</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>Pachetul descărcat nu a putut fi salvat.</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>Actualizarea nu a putut fi instalată.</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>Locket {0} a fost instalat. Închide și redeschide Locket pentru a-l folosi.</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>Locket nu este încă pregătit.</value>

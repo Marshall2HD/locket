@@ -102,29 +102,20 @@ namespace Kleio::SettingsUi
             return link;
         }
 
-        // Sparkle's "Install Update" from the update alert, reported in the same InfoBar.
+        // GitHub releases are intentionally opened in the browser; there is no in-app package
+        // download or deployment path.
         void InstallFromInfoBar(winrt::InfoBar infoBar, winrt::Button checkButton, Kleio::UpdateInfo update)
         {
             checkButton.IsEnabled(false);
-            ShowInfo(infoBar, winrt::InfoBarSeverity::Informational, Strings::Get(L"Update_InstallingTitle"),
-                     Strings::Format(L"Update_Downloading", update.version), nullptr);
-            Kleio::InstallUpdate(update, [infoBar, checkButton, update](std::wstring const& error, std::wstring const& package) {
+            Kleio::InstallUpdate(update, [infoBar, checkButton, update](bool ok, std::wstring const& error) {
                 try
                 {
                     checkButton.IsEnabled(true);
-                    winrt::ButtonBase action{ nullptr };
-                    if (!package.empty())
+                    if (!ok)
                     {
-                        winrt::Button open;
-                        open.Content(winrt::box_value(winrt::hstring{ Strings::Get(L"Update_OpenInAppInstaller") }));
-                        open.Click([package](auto&&, auto&&) { Kleio::OpenPackageInstaller(package); });
-                        action = open;
+                        ShowInfo(infoBar, winrt::InfoBarSeverity::Error, Strings::Get(L"Update_InstallFailed"), error,
+                                 Link(Strings::Get(L"Update_Download"), update.releaseUrl.empty() ? std::wstring{ Kleio::ReleasesUrl } : update.releaseUrl));
                     }
-                    else
-                    {
-                        action = Link(Strings::Get(L"Update_Download"), update.releaseUrl.empty() ? std::wstring{ Kleio::ReleasesUrl } : update.releaseUrl);
-                    }
-                    ShowInfo(infoBar, winrt::InfoBarSeverity::Error, Strings::Get(L"Update_InstallFailed"), error, action);
                 }
                 catch (...)
                 {
@@ -156,17 +147,10 @@ namespace Kleio::SettingsUi
                     auto const update = result.update;
                     std::wstring message = Strings::Format(L"Update_Available", update.version, Kleio::SystemIntegration::AppVersion());
                     winrt::ButtonBase action{ nullptr };
-                    if (!update.packageUrl.empty())
-                    {
-                        winrt::Button install;
-                        install.Content(winrt::box_value(winrt::hstring{ Strings::Get(L"Update_Install") }));
-                        install.Click([infoBar, button, update](auto&&, auto&&) { InstallFromInfoBar(infoBar, button, update); });
-                        action = install;
-                    }
-                    else
-                    {
-                        action = Link(Strings::Get(L"Update_Download"), update.releaseUrl);
-                    }
+                    winrt::Button open;
+                    open.Content(winrt::box_value(winrt::hstring{ Strings::Get(L"Update_Download") }));
+                    open.Click([infoBar, button, update](auto&&, auto&&) { InstallFromInfoBar(infoBar, button, update); });
+                    action = open;
                     ShowInfo(infoBar, winrt::InfoBarSeverity::Success, Strings::Get(L"Update_AvailableTitle"), message, action);
                     infoBar.Content(Link(Strings::Get(L"Update_ReleaseNotes"), update.releaseUrl));
                     break;

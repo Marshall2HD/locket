@@ -21,7 +21,8 @@ namespace Kleio::ScriptingPipe
     namespace
     {
         constexpr std::uint32_t MaxRequestSize = 64 * 1024;
-        constexpr std::uint32_t MaxPayloadSize = 1024u * 1024u * 1024u;
+        constexpr std::uint32_t MaxPayloadSize = 64u * 1024u * 1024u;
+        constexpr DWORD TransferTimeoutMs = 30'000;
         // How long the client waits for Kleio (including starting it) before giving up.
         constexpr ULONGLONG ConnectTimeoutMs = 20'000;
 
@@ -35,18 +36,27 @@ namespace Kleio::ScriptingPipe
 
         // ---- Framing ----
 
-        // Blocking (client side) transfer of exactly `size` bytes.
+        // Overlapped client transfer with a finite deadline. Cancel and drain every timed-out I/O.
         bool TransferSync(HANDLE pipe, bool write, std::uint8_t* data, std::size_t size)
         {
+            wil::unique_event io{ wil::EventOptions::ManualReset };
             while (size > 0)
             {
-                DWORD const chunk = static_cast<DWORD>((std::min)(size, std::size_t{ 1 } << 20));
-                DWORD done = 0;
-                BOOL const ok = write ? ::WriteFile(pipe, data, chunk, &done, nullptr) : ::ReadFile(pipe, data, chunk, &done, nullptr);
-                if (!ok || done == 0)
+                const DWORD chunk = static_cast<DWORD>((std::min)(size, std::size_t{ 1 } << 20));
+                OVERLAPPED overlapped{};
+                overlapped.hEvent = io.get();
+                io.ResetEvent();
+                const BOOL started = write ? ::WriteFile(pipe, data, chunk, nullptr, &overlapped) : ::ReadFile(pipe, data, chunk, nullptr, &overlapped);
+                if (!started && ::GetLastError() != ERROR_IO_PENDING) return false;
+                if (::WaitForSingleObject(io.get(), TransferTimeoutMs) != WAIT_OBJECT_0)
                 {
+                    ::CancelIoEx(pipe, &overlapped);
+                    DWORD ignored = 0;
+                    ::GetOverlappedResult(pipe, &overlapped, &ignored, TRUE);
                     return false;
                 }
+                DWORD done = 0;
+                if (!::GetOverlappedResult(pipe, &overlapped, &done, FALSE) || done == 0) return false;
                 data += done;
                 size -= done;
             }
@@ -68,8 +78,8 @@ namespace Kleio::ScriptingPipe
                 {
                     return false;
                 }
-                HANDLE handles[] = { io.get(), stop };
-                if (::WaitForMultipleObjects(2, handles, FALSE, INFINITE) != WAIT_OBJECT_0)
+                const DWORD wait = ::WaitForMultipleObjects(2, handles, FALSE, TransferTimeoutMs);
+                if (wait != WAIT_OBJECT_0)
                 {
                     ::CancelIoEx(pipe, &overlapped);
                     DWORD ignored = 0;
@@ -332,6 +342,7 @@ namespace Kleio::ScriptingPipe
                 }
             }
 
+#ifndef KLEIO_STORE_BUILD
             // Not packaged (development): start our own executable.
             std::wstring path(MAX_PATH, L'\0');
             DWORD const size = ::GetModuleFileNameW(nullptr, path.data(), static_cast<DWORD>(path.size()));
@@ -351,6 +362,9 @@ namespace Kleio::ScriptingPipe
             ::CloseHandle(process.hThread);
             ::CloseHandle(process.hProcess);
             return true;
+#else
+            return false;
+#endif
         }
 
         bool IsKleioRunning()
@@ -371,6 +385,40 @@ namespace Kleio::ScriptingPipe
             return false;
         }
 
+        bool IsExpectedServer(HANDLE pipe)
+        {
+            ULONG processId = 0;
+            if (!::GetNamedPipeServerProcessId(pipe, &processId) || processId == 0) return false;
+            wil::unique_handle process{ ::OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, processId) };
+            if (!process) return false;
+
+            UINT32 familyLength = 0;
+            const LONG familyStatus = ::GetCurrentPackageFamilyName(&familyLength, nullptr);
+            if (familyStatus == ERROR_INSUFFICIENT_BUFFER && familyLength > 0)
+            {
+                std::wstring expected(familyLength, L'\0');
+                std::wstring actual(familyLength, L'\0');
+                if (::GetCurrentPackageFamilyName(&familyLength, expected.data()) == ERROR_SUCCESS &&
+                    ::GetPackageFamilyName(process.get(), &familyLength, actual.data()) == ERROR_SUCCESS)
+                {
+                    expected.resize(expected.find(L'\0'));
+                    actual.resize(actual.find(L'\0'));
+                    return CompareStringOrdinal(expected.c_str(), -1, actual.c_str(), -1, TRUE) == CSTR_EQUAL;
+                }
+                return false;
+            }
+
+            std::wstring expected(MAX_PATH, L'\0');
+            DWORD expectedLength = static_cast<DWORD>(expected.size());
+            std::wstring actual(MAX_PATH, L'\0');
+            DWORD actualLength = static_cast<DWORD>(actual.size());
+            if (!::QueryFullProcessImageNameW(::GetCurrentProcess(), 0, expected.data(), &expectedLength) ||
+                !::QueryFullProcessImageNameW(process.get(), 0, actual.data(), &actualLength)) return false;
+            expected.resize(expectedLength);
+            actual.resize(actualLength);
+            return CompareStringOrdinal(expected.c_str(), -1, actual.c_str(), -1, TRUE) == CSTR_EQUAL;
+        }
+
         wil::unique_hfile Connect(int& exitCode, std::wstring& error)
         {
             auto const name = Name();
@@ -379,7 +427,7 @@ namespace Kleio::ScriptingPipe
             for (;;)
             {
                 wil::unique_hfile pipe{ ::CreateFileW(name.c_str(), GENERIC_READ | GENERIC_WRITE, 0, nullptr, OPEN_EXISTING,
-                                                      SECURITY_SQOS_PRESENT | SECURITY_IDENTIFICATION, nullptr) };
+                                                      SECURITY_SQOS_PRESENT | SECURITY_IDENTIFICATION | FILE_FLAG_OVERLAPPED, nullptr) };
                 if (pipe)
                 {
                     return pipe;
@@ -437,7 +485,24 @@ namespace Kleio::ScriptingPipe
         return L"\\\\.\\pipe\\Kleio.Scripting." + sid + L"." + std::to_wstring(session);
     }
 
-    // ---- Server ----
+        bool PipeSecurityAttributes(SECURITY_ATTRIBUTES& attributes, PSECURITY_DESCRIPTOR& descriptor)
+        {
+            wil::unique_handle token;
+            if (!::OpenProcessToken(::GetCurrentProcess(), TOKEN_QUERY, token.put())) return false;
+            DWORD size = 0;
+            ::GetTokenInformation(token.get(), TokenUser, nullptr, 0, &size);
+            std::vector<std::uint8_t> buffer(size);
+            if (size == 0 || !::GetTokenInformation(token.get(), TokenUser, buffer.data(), size, &size)) return false;
+            LPWSTR sidText = nullptr;
+            if (!::ConvertSidToStringSidW(reinterpret_cast<TOKEN_USER*>(buffer.data())->User.Sid, &sidText)) return false;
+            const std::wstring sddl = L"D:P(A;;GA;;;" + std::wstring{ sidText } + L")(A;;GA;;;SY)";
+            ::LocalFree(sidText);
+            if (!::ConvertStringSecurityDescriptorToSecurityDescriptorW(sddl.c_str(), SDDL_REVISION_1, &descriptor, nullptr)) return false;
+            attributes = { sizeof(attributes), descriptor, FALSE };
+            return true;
+        }
+
+        // ---- Server ----
 
     Server::Server(Handler handler) :
         m_handler(std::move(handler)),
@@ -455,6 +520,12 @@ namespace Kleio::ScriptingPipe
         {
             m_thread.join();
         }
+        std::scoped_lock lock{ m_workersMutex };
+        for (auto& worker : m_workers)
+        {
+            if (worker.joinable()) worker.join();
+        }
+        m_workers.clear();
     }
 
     void Server::Run()
@@ -464,11 +535,21 @@ namespace Kleio::ScriptingPipe
         wil::unique_event connected{ wil::EventOptions::ManualReset };
         while (!m_stopping)
         {
-            wil::unique_hfile pipe{ ::CreateNamedPipeW(
+            SECURITY_ATTRIBUTES attributes{};
+            PSECURITY_DESCRIPTOR descriptor = nullptr;
+            if (!PipeSecurityAttributes(attributes, descriptor))
+            {
+                Log(L"could not create pipe security attributes");
+                break;
+            }
+            // descriptor remains allocated through CreateNamedPipeW and is released immediately after.
+            HANDLE const rawPipe = ::CreateNamedPipeW(
                 name.c_str(),
-                PIPE_ACCESS_DUPLEX | FILE_FLAG_OVERLAPPED | FILE_FLAG_FIRST_PIPE_INSTANCE,
+                PIPE_ACCESS_DUPLEX | FILE_FLAG_OVERLAPPED,
                 PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT | PIPE_REJECT_REMOTE_CLIENTS,
-                1, 64 * 1024, 64 * 1024, 0, nullptr) };
+                PIPE_UNLIMITED_INSTANCES, 64 * 1024, 64 * 1024, 0, &attributes);
+            ::LocalFree(descriptor);
+            wil::unique_hfile pipe{ rawPipe };
             if (!pipe)
             {
                 Log(L"could not create the pipe (" + std::to_wstring(::GetLastError()) + L")");
@@ -513,16 +594,28 @@ namespace Kleio::ScriptingPipe
             {
                 continue;
             }
-            try
+            // Keep the listener responsive: each connected client has a bounded worker. Pipe I/O
+            // itself has finite deadlines, and shutdown joins every worker after cancelling I/O.
+            while (!m_stopping && m_activeWorkers.load() >= 8)
             {
-                Serve(pipe.get());
+                if (::WaitForSingleObject(m_stop.get(), 50) == WAIT_OBJECT_0) break;
             }
-            catch (...)
-            {
-                Log(L"request failed");
-            }
-            ::FlushFileBuffers(pipe.get());
-            ::DisconnectNamedPipe(pipe.get());
+            if (m_stopping) break;
+            ++m_activeWorkers;
+            std::scoped_lock lock{ m_workersMutex };
+            m_workers.emplace_back([this, pipe = std::move(pipe)]() mutable {
+                try
+                {
+                    Serve(pipe.get());
+                    ::FlushFileBuffers(pipe.get());
+                    ::DisconnectNamedPipe(pipe.get());
+                }
+                catch (...)
+                {
+                    Log(L"request failed");
+                }
+                --m_activeWorkers;
+            });
         }
         winrt::uninit_apartment();
     }
@@ -619,6 +712,11 @@ namespace Kleio::ScriptingPipe
         if (!pipe)
         {
             return Fail(exitCode, error);
+        }
+
+        if (!IsExpectedServer(pipe.get()))
+        {
+            return Fail(Unavailable, Strings::Get(L"Script_NotResponding"));
         }
 
         HANDLE const handle = pipe.get();

@@ -310,9 +310,6 @@
   <data name="Update_Available" xml:space="preserve">
     <value>Доступна версия Locket {0}. У вас установлена {1}.</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>Установить обновление</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>Пропустить эту версию</value>
   </data>
@@ -324,21 +321,6 @@
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>Не удалось установить Locket {0}</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>Открыть в установщике приложений</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>Установка Locket {0}</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>Locket перезапустится после установки обновления.</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>Установка обновления</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>Загрузка Locket {0}. Locket перезапустится после установки обновления.</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>Не удалось установить обновление</value>
@@ -363,21 +345,6 @@
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>Проверьте подключение к Интернету и повторите попытку.</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>В выпуске нет установочного пакета для этого компьютера.</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>Ошибка загрузки (HTTP {0}).</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>Не удалось сохранить загруженный пакет.</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>Не удалось установить обновление.</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>Locket {0} установлен. Завершите и снова откройте Locket, чтобы использовать новую версию.</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>Locket ещё не готов.</value>

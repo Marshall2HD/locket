@@ -2,6 +2,7 @@
 #include "Core/Storage.h"
 #include "Core/ClipboardFormats.h"
 
+#include <limits>
 #include <map>
 #include <stdexcept>
 #include <string>
@@ -222,18 +223,21 @@ namespace Kleio
             Transaction(Transaction const&) = delete;
             Transaction& operator=(Transaction const&) = delete;
 
+            explicit operator bool() const noexcept { return m_active; }
+
             bool Commit()
             {
                 if (!m_active)
                 {
                     return false;
                 }
-                m_active = false;
                 if (!Exec(m_db, "COMMIT"))
                 {
                     Exec(m_db, "ROLLBACK");
+                    m_active = false;
                     return false;
                 }
+                m_active = false;
                 return true;
             }
 
@@ -265,6 +269,72 @@ namespace Kleio
                 }
             }
             return true;
+        }
+
+        bool UpdateItemRow(sqlite3* db, HistoryItem const& item)
+        {
+            Statement update(db,
+                "UPDATE items SET application = ?1, first_copied_at = ?2, last_copied_at = ?3, "
+                "number_of_copies = ?4, pin = ?5, title = ?6 WHERE id = ?7");
+            if (!update)
+            {
+                return false;
+            }
+            update.BindText(1, item.application);
+            update.BindInt64(2, item.firstCopiedAt);
+            update.BindInt64(3, item.lastCopiedAt);
+            update.BindInt64(4, item.numberOfCopies);
+            update.BindTextOrNull(5, item.pin);
+            update.BindText(6, item.title);
+            update.BindInt64(7, item.id);
+            return update.Run();
+        }
+
+        bool ReplaceContents(sqlite3* db, HistoryItem const& item)
+        {
+            Statement remove(db, "DELETE FROM contents WHERE item_id = ?1");
+            if (!remove)
+            {
+                return false;
+            }
+            remove.BindInt64(1, item.id);
+            return remove.Run() && InsertContents(db, item);
+        }
+
+        bool InsertItemRow(sqlite3* db, HistoryItem& item)
+        {
+            Statement insert(db,
+                "INSERT INTO items (application, first_copied_at, last_copied_at, number_of_copies, pin, title) "
+                "VALUES (?1, ?2, ?3, ?4, ?5, ?6)");
+            if (!insert)
+            {
+                return false;
+            }
+            insert.BindText(1, item.application);
+            insert.BindInt64(2, item.firstCopiedAt);
+            insert.BindInt64(3, item.lastCopiedAt);
+            insert.BindInt64(4, item.numberOfCopies);
+            insert.BindTextOrNull(5, item.pin);
+            insert.BindText(6, item.title);
+            if (!insert.Run())
+            {
+                return false;
+            }
+            item.id = sqlite3_last_insert_rowid(db);
+            return InsertContents(db, item);
+        }
+
+        std::int32_t ClampCopies(std::int64_t copies) noexcept
+        {
+            if (copies < 1)
+            {
+                return 1;
+            }
+            if (copies > std::numeric_limits<std::int32_t>::max())
+            {
+                return std::numeric_limits<std::int32_t>::max();
+            }
+            return static_cast<std::int32_t>(copies);
         }
     }
 
@@ -320,7 +390,8 @@ namespace Kleio
         }
         // Orphans can only appear if foreign keys were ever off; drop them.
         Exec(m_db, "DELETE FROM contents WHERE item_id IS NULL OR item_id NOT IN (SELECT id FROM items)");
-        RemoveUnpersistableContents();
+        int removed = 0;
+        RemoveUnpersistableContents(removed);
     }
 
     Storage::~Storage()
@@ -353,7 +424,7 @@ namespace Kleio
                 item->application = select.Text(1);
                 item->firstCopiedAt = select.Int64(2);
                 item->lastCopiedAt = select.Int64(3);
-                item->numberOfCopies = static_cast<std::int32_t>(select.Int64(4));
+                item->numberOfCopies = ClampCopies(select.Int64(4));
                 item->pin = select.Text(5);
                 item->title = select.Text(6);
                 byId.emplace(item->id, item);
@@ -375,126 +446,169 @@ namespace Kleio
                 it->second->contents.push_back(std::move(content));
             }
         }
+        for (auto const& item : items)
+        {
+            (void)item->ImageShared();   // build immutable image storage off the UI thread
+        }
         return items;
     }
 
-    void Storage::Insert(HistoryItem& item)
+    bool Storage::Insert(HistoryItem& item)
     {
+        const std::int64_t originalId = item.id;
         if (!m_db)
         {
-            return;
+            return false;
         }
         Transaction transaction(m_db);
-        Statement insert(m_db,
-            "INSERT INTO items (application, first_copied_at, last_copied_at, number_of_copies, pin, title) "
-            "VALUES (?1, ?2, ?3, ?4, ?5, ?6)");
-        insert.BindText(1, item.application);
-        insert.BindInt64(2, item.firstCopiedAt);
-        insert.BindInt64(3, item.lastCopiedAt);
-        insert.BindInt64(4, item.numberOfCopies);
-        insert.BindTextOrNull(5, item.pin);
-        insert.BindText(6, item.title);
-        if (!insert.Run())
+        if (!transaction)
         {
-            return;
+            return false;
         }
-        const std::int64_t previousId = item.id;
-        item.id = sqlite3_last_insert_rowid(m_db);
-        if (!InsertContents(m_db, item) || !transaction.Commit())
+        if (!InsertItemRow(m_db, item) || !transaction.Commit())
         {
-            item.id = previousId;
+            item.id = originalId;
             LogSqliteError(m_db, L"insert failed");
+            return false;
         }
+        (void)item.ImageShared();   // keep UI image decoding from copying the PNG vector
+        return true;
     }
 
-    void Storage::Update(HistoryItem const& item)
+    bool Storage::Update(HistoryItem const& item)
+    {
+        return m_db && item.id != 0 && UpdateItemRow(m_db, item);
+    }
+
+    bool Storage::UpdateContents(HistoryItem const& item)
     {
         if (!m_db || item.id == 0)
         {
-            return;
-        }
-        Statement update(m_db,
-            "UPDATE items SET application = ?1, first_copied_at = ?2, last_copied_at = ?3, "
-            "number_of_copies = ?4, pin = ?5, title = ?6 WHERE id = ?7");
-        update.BindText(1, item.application);
-        update.BindInt64(2, item.firstCopiedAt);
-        update.BindInt64(3, item.lastCopiedAt);
-        update.BindInt64(4, item.numberOfCopies);
-        update.BindTextOrNull(5, item.pin);
-        update.BindText(6, item.title);
-        update.BindInt64(7, item.id);
-        update.Run();
-    }
-
-    void Storage::UpdateContents(HistoryItem const& item)
-    {
-        if (!m_db || item.id == 0)
-        {
-            return;
+            return false;
         }
         Transaction transaction(m_db);
-        Statement remove(m_db, "DELETE FROM contents WHERE item_id = ?1");
-        remove.BindInt64(1, item.id);
-        if (!remove.Run())
+        if (!transaction)
         {
-            return;
+            return false;
         }
-        if (!InsertContents(m_db, item))
-        {
-            return;
-        }
-        transaction.Commit();
+        return ReplaceContents(m_db, item) && transaction.Commit();
     }
 
-    void Storage::Remove(std::int64_t id)
+    bool Storage::UpdateItemAndContents(HistoryItem const& item)
+    {
+        if (!m_db || item.id == 0)
+        {
+            return false;
+        }
+        Transaction transaction(m_db);
+        if (!transaction)
+        {
+            return false;
+        }
+        return UpdateItemRow(m_db, item) && ReplaceContents(m_db, item) && transaction.Commit();
+    }
+
+    bool Storage::StoreReplacing(HistoryItem& replacement, std::int64_t supersededId)
+    {
+        const std::int64_t originalId = replacement.id;
+        if (!m_db)
+        {
+            return false;
+        }
+        Transaction transaction(m_db);
+        if (!transaction)
+        {
+            return false;
+        }
+        const bool stored = replacement.id == 0
+            ? InsertItemRow(m_db, replacement)
+            : UpdateItemRow(m_db, replacement) && ReplaceContents(m_db, replacement);
+        if (!stored)
+        {
+            replacement.id = originalId;
+            return false;
+        }
+        if (supersededId > 0 && supersededId != replacement.id)
+        {
+            Statement remove(m_db, "DELETE FROM items WHERE id = ?1");
+            if (!remove)
+            {
+                replacement.id = originalId;
+                return false;
+            }
+            remove.BindInt64(1, supersededId);
+            if (!remove.Run())
+            {
+                replacement.id = originalId;
+                return false;
+            }
+        }
+        if (!transaction.Commit())
+        {
+            replacement.id = originalId;
+            return false;
+        }
+        (void)replacement.ImageShared();   // keep UI image decoding from copying the PNG vector
+        return true;
+    }
+
+    bool Storage::Remove(std::int64_t id)
     {
         if (!m_db || id == 0)
         {
-            return;
+            return false;
         }
         Transaction transaction(m_db);
+        if (!transaction)
+        {
+            return false;
+        }
         Statement removeContents(m_db, "DELETE FROM contents WHERE item_id = ?1");
-        removeContents.BindInt64(1, id);
         Statement removeItem(m_db, "DELETE FROM items WHERE id = ?1");
+        if (!removeContents || !removeItem)
+        {
+            return false;
+        }
+        removeContents.BindInt64(1, id);
         removeItem.BindInt64(1, id);
-        if (removeContents.Run() && removeItem.Run())
-        {
-            transaction.Commit();
-        }
+        return removeContents.Run() && removeItem.Run() && transaction.Commit();
     }
 
-    void Storage::RemoveUnpinned()
+    bool Storage::RemoveUnpinned()
     {
         if (!m_db)
         {
-            return;
+            return false;
         }
         Transaction transaction(m_db);
-        if (Exec(m_db, "DELETE FROM contents WHERE item_id IN (SELECT id FROM items WHERE pin IS NULL OR pin = '')") &&
-            Exec(m_db, "DELETE FROM items WHERE pin IS NULL OR pin = ''"))
+        if (!transaction)
         {
-            transaction.Commit();
+            return false;
         }
+        return Exec(m_db, "DELETE FROM contents WHERE item_id IN (SELECT id FROM items WHERE pin IS NULL OR pin = '')") &&
+            Exec(m_db, "DELETE FROM items WHERE pin IS NULL OR pin = ''") && transaction.Commit();
     }
 
-    void Storage::RemoveAll()
+    bool Storage::RemoveAll()
     {
         if (!m_db)
         {
-            return;
+            return false;
         }
         Transaction transaction(m_db);
-        if (Exec(m_db, "DELETE FROM contents") && Exec(m_db, "DELETE FROM items"))
+        if (!transaction)
         {
-            transaction.Commit();
+            return false;
         }
+        return Exec(m_db, "DELETE FROM contents") && Exec(m_db, "DELETE FROM items") && transaction.Commit();
     }
 
-    int Storage::RemoveUnpersistableContents()
+    bool Storage::RemoveUnpersistableContents(int& removed)
     {
+        removed = 0;
         if (!m_db)
         {
-            return 0;
+            return false;
         }
         std::vector<std::wstring> unwanted;
         {
@@ -510,22 +624,35 @@ namespace Kleio
         }
         if (unwanted.empty())
         {
-            return 0;
+            return true;
         }
         Transaction transaction(m_db);
+        if (!transaction)
+        {
+            return false;
+        }
         Statement remove(m_db, "DELETE FROM contents WHERE type = ?1");
-        int removed = 0;
+        if (!remove)
+        {
+            return false;
+        }
         for (auto const& type : unwanted)
         {
             remove.Reset();
             remove.BindText(1, type);
             if (!remove.Run())
             {
-                return 0;
+                removed = 0;
+                return false;
             }
             removed += sqlite3_changes(m_db);
         }
-        return transaction.Commit() ? removed : 0;
+        if (!transaction.Commit())
+        {
+            removed = 0;
+            return false;
+        }
+        return true;
     }
 
     std::uint64_t Storage::SizeInBytes() const

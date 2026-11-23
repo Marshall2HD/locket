@@ -126,7 +126,7 @@ namespace Kleio
         // Maccy's Notifier.notify(body:sound:): sound (PlaySounds) + notification (ShowNotifications).
         void Notify(HistoryItem const& item, wchar_t const* sound);
         void ShowUpdateNotification(UpdateInfo const& update);
-        void ShowUpdateFailedNotification(std::wstring const& error, std::wstring const& package, UpdateInfo const& update);
+        void ShowUpdateFailedNotification(std::wstring const& error, UpdateInfo const& update);
         // True when no copies are being recorded: paused, or every Save type is off (Maccy's
         // isStatusItemDisabled).
         bool IsRecordingDisabled() const;
@@ -147,6 +147,9 @@ namespace Kleio
         bool m_hotKeysSuspended = false;
         std::unique_ptr<ScriptingPipe::Server> m_scripting;
         std::weak_ptr<HistoryItem> m_selectedItem;
+        winrt::Microsoft::UI::Dispatching::DispatcherQueueTimer m_pasteAdvanceTimer{ nullptr };
+        std::uint64_t m_pasteStackGeneration = 0;
+        bool m_pasteAdvancePending = false;
 
         winrt::Kleio::PopupWindow m_popup{ nullptr };
         winrt::Kleio::SettingsWindow m_settingsWindow{ nullptr };

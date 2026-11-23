@@ -310,9 +310,6 @@
   <data name="Update_Available" xml:space="preserve">
     <value>Locket {0} 現已推出。你目前的版本是 {1}。</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>安裝更新</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>略過此版本</value>
   </data>
@@ -324,21 +321,6 @@
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>無法安裝 Locket {0}</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>在應用程式安裝程式中開啟</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>正在安裝 Locket {0}</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>更新安裝完成後 Locket 會重新啟動。</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>正在安裝更新</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>正在下載 Locket {0}。更新安裝完成後 Locket 會重新啟動。</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>無法安裝更新</value>
@@ -363,21 +345,6 @@
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>請檢查網際網路連線，然後再試一次。</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>此版本沒有適用於這部電腦的安裝套件。</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>下載失敗（HTTP {0}）。</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>無法儲存下載的套件。</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>無法安裝更新。</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>已安裝 Locket {0}。請結束並重新開啟 Locket 以使用新版本。</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>Locket 尚未就緒。</value>
@@ -614,7 +581,7 @@
     <value>開啟 Locket</value>
   </data>
   <data name="General_OpenDescription.Text" xml:space="preserve">
-    <value>全局快捷键，用于打开应用程序。在按住修改器的同时重复按下主键将选择列表中的下一个项目。在此模式下，鬆開變量鍵將確認選擇並關閉彈出窗口。預設：Win+Shift+C。</value>
+    <value>全域快捷鍵，用於開啟應用程式。在按住修飾鍵的同時重複按下主鍵，將選取清單中的下一個項目。在此模式下，鬆開修飾鍵將確認選取並關閉彈出式視窗。預設：Win+Shift+C。</value>
   </data>
   <data name="General_PopupRecorder.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>開啟 Locket 的快速鍵</value>

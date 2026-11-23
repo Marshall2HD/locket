@@ -310,9 +310,6 @@
   <data name="Update_Available" xml:space="preserve">
     <value>Locket {0} এখন পাওয়া যাচ্ছে। আপনার কাছে আছে {1}।</value>
   </data>
-  <data name="Update_Install" xml:space="preserve">
-    <value>আপডেট ইনস্টল করুন</value>
-  </data>
   <data name="Update_Skip" xml:space="preserve">
     <value>এই সংস্করণ এড়িয়ে যান</value>
   </data>
@@ -324,21 +321,6 @@
   </data>
   <data name="Update_InstallFailedTitle" xml:space="preserve">
     <value>Locket {0} ইনস্টল করা যায়নি</value>
-  </data>
-  <data name="Update_OpenInAppInstaller" xml:space="preserve">
-    <value>অ্যাপ ইনস্টলারে খুলুন</value>
-  </data>
-  <data name="Update_Installing" xml:space="preserve">
-    <value>Locket {0} ইনস্টল হচ্ছে</value>
-  </data>
-  <data name="Update_RestartsWhenInstalled" xml:space="preserve">
-    <value>আপডেট ইনস্টল হলে Locket আবার চালু হবে।</value>
-  </data>
-  <data name="Update_InstallingTitle" xml:space="preserve">
-    <value>আপডেট ইনস্টল হচ্ছে</value>
-  </data>
-  <data name="Update_Downloading" xml:space="preserve">
-    <value>Locket {0} ডাউনলোড হচ্ছে। আপডেট ইনস্টল হলে Locket আবার চালু হবে।</value>
   </data>
   <data name="Update_InstallFailed" xml:space="preserve">
     <value>আপডেট ইনস্টল করা যায়নি</value>
@@ -363,21 +345,6 @@
   </data>
   <data name="Update_CheckConnection" xml:space="preserve">
     <value>আপনার ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।</value>
-  </data>
-  <data name="Update_NoPackage" xml:space="preserve">
-    <value>এই রিলিজে এই PC-এর জন্য কোনো ইনস্টলার প্যাকেজ নেই।</value>
-  </data>
-  <data name="Update_DownloadFailed" xml:space="preserve">
-    <value>ডাউনলোড ব্যর্থ হয়েছে (HTTP {0})।</value>
-  </data>
-  <data name="Update_SaveFailed" xml:space="preserve">
-    <value>ডাউনলোড করা প্যাকেজ সংরক্ষণ করা যায়নি।</value>
-  </data>
-  <data name="Update_NotInstalled" xml:space="preserve">
-    <value>আপডেট ইনস্টল করা যায়নি।</value>
-  </data>
-  <data name="Update_InstalledRestart" xml:space="preserve">
-    <value>Locket {0} ইনস্টল হয়েছে। ব্যবহার করতে Locket বন্ধ করে আবার খুলুন।</value>
   </data>
   <data name="Script_NotReady" xml:space="preserve">
     <value>Locket এখনো প্রস্তুত নয়।</value>
@@ -614,7 +581,7 @@
     <value>Locket খুলুন</value>
   </data>
   <data name="General_OpenDescription.Text" xml:space="preserve">
-    <value>অ্যাপ্লিকেশন খোলার জন্য গ্লোবাল শর্টকাট চাবি। ডিফল্ট: Win+Shift+C।</value>
+    <value>অ্যাপ্লিকেশন খোলার জন্য গ্লোবাল শর্টকাট কী। মডিফায়ার কী চেপে ধরে মূল কীটি বারবার চাপলে তালিকার পরবর্তী আইটেমটি নির্বাচিত হবে। এই মোডে, মডিফায়ার কীগুলো ছেড়ে দিলে নির্বাচন নিশ্চিত হবে এবং পপআপ বন্ধ হবে। ডিফল্ট: Win+Shift+C।</value>
   </data>
   <data name="General_PopupRecorder.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Locket খোলার শর্টকাট</value>
