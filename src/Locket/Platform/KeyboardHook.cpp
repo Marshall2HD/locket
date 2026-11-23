@@ -34,49 +34,43 @@ namespace Locket
             inputs[1].ki.dwFlags = KEYEVENTF_KEYUP;
             SendInput(2, inputs, sizeof(INPUT));
         }
+    }
 
-        enum class HookEvent
-        {
-            Shortcut,
-            Paste,
-        };
-
-        void RaiseLater(HookEvent which) noexcept
-        {
-            auto raise = [which]() {
-                try
-                {
-                    auto& hook = KeyboardHook::Instance();
-                    if (which == HookEvent::Shortcut)
-                    {
-                        hook.ShortcutPressed();
-                    }
-                    else
-                    {
-                        hook.PasteDetected();
-                    }
-                }
-                catch (...)
-                {
-                    OutputDebugStringW(L"Locket: exception in a keyboard hook event handler\n");
-                }
-            };
-
+    void KeyboardHook::RaiseLater(HookEvent which) noexcept
+    {
+        auto raise = [which]() {
             try
             {
-                auto dispatcher = [] {
-                    auto const& self = KeyboardHook::Instance();
-                    std::scoped_lock lock{ self.m_configMutex };
-                    return self.m_dispatcher;
-                }();
-                if (dispatcher)
+                auto& hook = Instance();
+                if (which == HookEvent::Shortcut)
                 {
-                    dispatcher.TryEnqueue(raise);
+                    hook.ShortcutPressed();
+                }
+                else
+                {
+                    hook.PasteDetected();
                 }
             }
             catch (...)
             {
+                OutputDebugStringW(L"Locket: exception in a keyboard hook event handler\n");
             }
+        };
+
+        try
+        {
+            auto dispatcher = [] {
+                auto const& self = Instance();
+                std::scoped_lock lock{ self.m_configMutex };
+                return self.m_dispatcher;
+            }();
+            if (dispatcher)
+            {
+                dispatcher.TryEnqueue(raise);
+            }
+        }
+        catch (...)
+        {
         }
     }
 

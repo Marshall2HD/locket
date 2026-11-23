@@ -42,11 +42,18 @@ namespace Locket
         Event<> PasteDetected;
 
     private:
+        enum class HookEvent
+        {
+            Shortcut,
+            Paste,
+        };
+
         KeyboardHook() = default;
         ~KeyboardHook();
         void UpdateHook(bool resetState = true);
         void HookThread();
         void ResetHookState() noexcept;
+        static void RaiseLater(HookEvent which) noexcept;
         static LRESULT CALLBACK HookProc(int code, WPARAM wParam, LPARAM lParam);
 
         HHOOK m_hook = nullptr;
