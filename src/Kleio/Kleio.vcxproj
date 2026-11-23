@@ -156,12 +156,12 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\*.png" />
-    <Content Include="Assets\*.ico">
+    <None Include="Assets\*.ico">
       <DeploymentContent>true</DeploymentContent>
-    </Content>
-    <Content Include="Assets\Sounds\*.wav">
+    </None>
+    <None Include="Assets\Sounds\*.wav">
       <DeploymentContent>true</DeploymentContent>
-    </Content>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\**\*.resw" />
